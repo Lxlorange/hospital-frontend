@@ -1,6 +1,5 @@
 <template>
     <el-main>
-      <!-- 查询栏 -->
       <el-form :model="searchParm" :inline="true" size="default">
         <el-form-item>
           <el-input
@@ -9,13 +8,12 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button icon="Search" @click="searchBtn">查询</el-button>
+          <el-button type="primary" icon="Search" @click="searchBtn">查询</el-button>
           
         </el-form-item>
       </el-form>
-      <!-- 表格数据 -->
       <el-table :height="tableHeight" :data="tableList" border stripe>
-        <el-table-column prop="image" label="头像">
+        <el-table-column prop="image" label="照片">
         <template #default="scope">
           <el-image
           v-if="scope.row.image"
@@ -69,7 +67,7 @@
         >
           <template #default="scope">
             <el-button
-            type="warning"
+            type="info"
             icon="Edit"
             size="default"
             @click="resetPasswordBtn(scope.row)"
@@ -80,13 +78,13 @@
               type="danger"
               icon="Delete"
               size="default"
+              plain
               @click="deleteBtn(scope.row.userId)"
               >删除</el-button
             >
           </template>
         </el-table-column>
       </el-table>
-      <!-- 分页 -->
       <el-pagination
         @size-change="sizeChange"
         @current-change="currentChange"
@@ -240,4 +238,3 @@ const changStatus = async (userId: string) => {
   </script>
   
   <style scoped></style>
-  

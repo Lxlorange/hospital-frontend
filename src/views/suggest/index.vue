@@ -1,6 +1,5 @@
 <template>
     <el-main>
-      <!-- 查询栏 -->
       <el-form :model="searchParm" :inline="true" size="default">
         <el-form-item>
           <el-input
@@ -9,11 +8,10 @@
           ></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button icon="Search" @click="searchBtn">查询</el-button>
+          <el-button type="primary" icon="Search" @click="searchBtn">查询</el-button>
           
         </el-form-item>
       </el-form>
-      <!-- 表格数据 -->
       <el-table :height="tableHeight" :data="tableList" border stripe>
         <el-table-column prop="title" label="标题"></el-table-column>
         <el-table-column prop="content" label="反馈内容"></el-table-column>
@@ -27,7 +25,7 @@
           <template #default="scope">
             <el-button
               v-if="global.$hasPerm(['sys:suggest:delete'])"
-              type="danger"
+              style="background: linear-gradient(45deg, #FE6B8B 30%, #FF8E53 90%); color: white; border: none;"
               icon="Delete"
               size="default"
               @click="deleteBtn(scope.row.id)"
@@ -36,7 +34,6 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- 分页 -->
       <el-pagination
         @size-change="sizeChange"
         @current-change="currentChange"
@@ -126,4 +123,3 @@
   </script>
   
   <style scoped></style>
-  

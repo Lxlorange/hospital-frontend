@@ -20,7 +20,7 @@ export const deleteApi = (roleId:string)=>{
 export const getSelectApi = ()=>{
     return http.get("/api/role/selectList")
 }
-//分配权限保存
+//修改权限保存
 export const saveRoleMenuApi = (parm:SaveMenuParm)=>{
     return http.post("/api/role/saveRoleMenu",parm)
 }

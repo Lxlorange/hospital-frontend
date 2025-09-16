@@ -66,7 +66,8 @@
                   :value="item['value']"
                 />
               </el-select> </el-form-item
-          ></el-col>
+            ></el-col
+          >
           <el-col :span="12" :offset="0">
             <el-form-item label="放号：" size="normal">
               <el-input
@@ -79,15 +80,14 @@
         </el-row>
       </el-form>
       <el-form-item>
-        <el-checkbox
+        <el-checkbox-button
           v-model="isCheckAll"
           @change="checkAllBtn"
-          style="margin-left: 20px"
+          style="margin-left: 20px; --el-checkbox-button-checked-bg-color: #67c23a; --el-checkbox-button-checked-text-color: #ffffff; --el-checkbox-button-checked-border-color: #67c23a;"
           >全选
-        </el-checkbox>
+        </el-checkbox-button>
       </el-form-item>
 
-      <!-- 排班表格 -->
       <el-table
         stripe
         :data="tableData"

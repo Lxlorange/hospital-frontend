@@ -1,6 +1,5 @@
 <template>
   <el-main>
-    <!-- 查询栏 -->
     <el-form :model="searchParm" :inline="true" size="default">
       <el-form-item>
         <el-input
@@ -9,11 +8,10 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button icon="Search" @click="searchBtn">查询</el-button>
+        <el-button type="success" icon="Search" @click="searchBtn">查询</el-button>
         
       </el-form-item>
     </el-form>
-    <!-- 表格数据 -->
     <el-table :height="tableHeight" :data="tableList" border stripe>
       <el-table-column prop="visitname" label="就诊人" />
       <el-table-column prop="nickName" label="挂号医生" />
@@ -80,7 +78,7 @@
       <el-table-column label="操作" width="220" align="center">
         <template #default="scope">
           <el-button
-            type="primary"
+            style="background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%); color: white; border: none;"
             icon="Edit"
             size="default"
             @click="callBtn(scope.row)"
@@ -90,13 +88,13 @@
             type="danger"
             icon="Edit"
             size="default"
+            plain
             @click="deleteBtn(scope.row.makeId)"
             >删除</el-button
           >
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页 -->
     <el-pagination
       @size-change="sizeChange"
       @current-change="currentChange"

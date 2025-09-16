@@ -1,6 +1,5 @@
 <template>
   <el-main>
-    <!-- 查询栏 -->
     <el-form :model="searchParm" :inline="true" size="default">
       <el-form-item>
         <el-input
@@ -9,11 +8,10 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button icon="Search" @click="searchBtn">查询</el-button>
+        <el-button type="primary" icon="Search" @click="searchBtn">查询</el-button>
         
       </el-form-item>
     </el-form>
-    <!-- 表格数据 -->
     <el-table :height="tableHeight" :data="tableList" border stripe>
       <el-table-column prop="visitname" label="就诊人" />
       <el-table-column prop="nickName" label="医生" />
@@ -73,9 +71,9 @@
           >
         </template>
       </el-table-column>
-      <el-table-column prop="advice" label="医嘱、诊断说明">
+      <el-table-column prop="advice" label="医嘱">
         <template #default="scope">
-          <el-button type="success" size="default" @click="lookBtn(scope.row)"
+          <el-button type="info" size="default" @click="lookBtn(scope.row)"
             >查看医嘱</el-button
           >
         </template>
@@ -84,7 +82,7 @@
       <el-table-column label="操作" width="220" align="center">
         <template #default="scope">
           <el-button
-            type="primary"
+            style="background: linear-gradient(to right, #f78ca0 0%, #f9748f 19%, #fd868c 60%, #fe9a8b 100%); color: white; border: none;"
             icon="Edit"
             size="default"
             @click="makeBtn(scope.row)"
@@ -93,7 +91,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页 -->
     <el-pagination
       @size-change="sizeChange"
       @current-change="currentChange"
@@ -105,7 +102,6 @@
       background
     >
     </el-pagination>
-     <!-- 医嘱、诊断说明 -->
      <SysDialog
       :title="dialog.title"
       :visible="dialog.visible"
@@ -147,7 +143,6 @@
         </el-form>
       </template>
     </SysDialog>
-    <!-- 查看医嘱 -->
     <el-dialog
       v-model="dialogVisible"
       title="医嘱详情"

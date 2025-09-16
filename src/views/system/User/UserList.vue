@@ -1,6 +1,5 @@
 <template>
   <el-main>
-    <!-- 查询栏 -->
     <el-form :model="searchParm" :inline="true" size="default">
       <el-form-item>
         <el-input
@@ -15,24 +14,27 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button icon="Search" @click="searchBtn">查询</el-button>
+        <el-button type="success" icon="Search" @click="searchBtn">查询</el-button>
         <el-button
           v-if="global.$hasPerm(['sys:user:add'])"
           icon="Plus"
-          type="primary"
+          style="
+            background: linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%);
+            color: white;
+            border: none;
+          "
           @click="addBtn"
           >创建</el-button
         >
       </el-form-item>
     </el-form>
-    <!-- 表格 -->
     <el-table :height="tableHeight" :data="tableList" border stripe>
-      <el-table-column align="center" label="头像" prop="image">
+      <el-table-column align="center" label="照片" prop="image">
         <template #default="scope">
           <el-image
             v-if="scope.row.image"
             style="width: 80px; height: 80px; border-radius: 50%"
-            :src="imgbase+scope.row.image.split(',')[0]"
+            :src="imgbase + scope.row.image.split(',')[0]"
           />
         </template>
       </el-table-column>
@@ -108,7 +110,7 @@
         <template #default="scope">
           <el-button
             v-if="global.$hasPerm(['sys:user:edit'])"
-            type="primary"
+            type="success"
             icon="Edit"
             size="default"
             @click="editBtn(scope.row)"
@@ -116,7 +118,7 @@
           >
           <el-button
             v-if="global.$hasPerm(['sys:user:reset'])"
-            type="warning"
+            type="info"
             icon="Setting"
             size="default"
             @click="resetPasswordBtn(scope.row.userId)"
@@ -127,13 +129,13 @@
             type="danger"
             icon="Delete"
             size="default"
+            plain
             @click="deleteBtn(scope.row.userId)"
             >删除</el-button
           >
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页 -->
     <el-pagination
       @size-change="sizeChange"
       @current-change="currentChange"
@@ -146,7 +148,6 @@
     >
     </el-pagination>
 
-    <!-- 创建修改 -->
     <SysDialog
       :title="dialog.title"
       :width="dialog.width"
@@ -284,7 +285,7 @@
               v-model="addModel.visitAddress"
             ></el-input>
           </el-form-item>
-          <el-form-item prop="image" label="头像：">
+          <el-form-item prop="image" label="照片：">
             <UploadImage
               ref="upImgRef"
               @getImg="getImg"
@@ -320,9 +321,9 @@ import {
 import { User } from "@/api/user/UserModel";
 import useInstance from "@/hooks/useInstance";
 const { global } = useInstance();
-const imgbase = computed(()=>{
-  return process.env.BASE_API_IMG
-})
+const imgbase = computed(() => {
+  return process.env.BASE_API_IMG;
+});
 const selectRef = ref();
 //下拉数据
 let options = ref([]);
@@ -364,8 +365,8 @@ const addModel = reactive({
   introduction: "",
   visitAddress: "",
   toHome: "0",
-  goodAt:"",
-  price:''
+  goodAt: "",
+  price: "",
 });
 //表单验证规则
 const rules = reactive({
@@ -404,7 +405,7 @@ const rules = reactive({
       message: "输入电话",
     },
   ],
-    price: [
+  price: [
     {
       required: true,
       trigger: ["blur", "change"],
@@ -443,7 +444,7 @@ const rules = reactive({
     {
       required: true,
       trigger: ["blur"],
-      message: "上传头像",
+      message: "上传照片",
     },
   ],
   introduction: [
@@ -579,7 +580,7 @@ const editBtn = async (row: User) => {
       for (let i = 0; i < imgs.length; i++) {
         let img = { name: "", url: "" };
         img.name = imgs[i];
-        img.url = process.env.BASE_API_IMG+ imgs[i];
+        img.url = process.env.BASE_API_IMG + imgs[i];
         fileList.value.push(img);
         oldUrl.value.push({ url: imgs[i] });
       }
@@ -603,9 +604,7 @@ const deleteBtn = async (userId: string) => {
 };
 //重置密码
 const resetPasswordBtn = async (userId: string) => {
-  const confirm = await global.$myconfirm(
-    "确定重置密码吗,重置之后密码是【666666】?"
-  );
+  const confirm = await global.$myconfirm("重置之后密码是666666");
   if (confirm) {
     let res = await resetPasswordApi({ userId: userId });
     if (res && res.code == 200) {
@@ -634,7 +633,7 @@ const commit = () => {
       }
       if (res && res.code == 200) {
         ElMessage.success(res.msg);
-        upImgRef.value.clearimg()
+        upImgRef.value.clearimg();
         getList();
         onClose();
       }

@@ -1,6 +1,5 @@
 <template>
   <el-main>
-    <!-- 查询栏 -->
     <el-form :model="searchParm" :inline="true" size="default">
       <el-form-item>
         <el-input
@@ -9,18 +8,17 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button icon="Search" @click="searchBtn">查询</el-button>
+        <el-button type="warning" icon="Search" @click="searchBtn">查询</el-button>
         
         <el-button
           v-if="global.$hasPerm(['sys:role:add'])"
           icon="Plus"
-          type="primary"
+          style="background: linear-gradient(to right, #8a2be2, #4169e1); color: white; border: none;"
           @click="addBtn"
           >创建</el-button
         >
       </el-form-item>
     </el-form>
-    <!-- 表格数据 -->
     <el-table :height="tableHeight" :data="tableList" border stripe>
       <el-table-column prop="roleName" label="角色名称"></el-table-column>
       <el-table-column prop="remark" label="角色备注"></el-table-column>
@@ -28,7 +26,7 @@
         <template #default="scope">
           <el-button
             v-if="global.$hasPerm(['sys:role:edit'])"
-            type="primary"
+            type="success"
             icon="Edit"
             size="default"
             @click="editBtn(scope.row)"
@@ -36,24 +34,24 @@
           >
           <el-button
             v-if="global.$hasPerm(['sys:role:assign'])"
-            type="success"
+            type="info"
             icon="Edit"
             size="default"
             @click="assignBtn(scope.row)"
-            >分配权限</el-button
+            >修改权限</el-button
           >
           <el-button
             v-if="global.$hasPerm(['sys:role:delete'])"
             type="danger"
             icon="Delete"
             size="default"
+            plain
             @click="deleteBtn(scope.row.roleId)"
             >删除</el-button
           >
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页 -->
     <el-pagination
       @size-change="sizeChange"
       @current-change="currentChange"
@@ -66,7 +64,6 @@
     >
     </el-pagination>
 
-    <!-- 创建、修改弹框 -->
     <SysDialog
       :title="dialog.title"
       :width="dialog.width"
@@ -93,7 +90,6 @@
         </el-form>
       </template>
     </SysDialog>
-    <!-- 分配权限 -->
     <AssignTree ref="assignTree"></AssignTree>
   </el-main>
 </template>
@@ -166,7 +162,7 @@ const editBtn = (row: SysRole) => {
   //清空表单
   addRef.value?.resetFields();
 };
-//分配权限按钮
+//修改权限按钮
 const assignBtn = (row: SysRole) => {
   assignTree.value.show(row.roleId, row.roleName);
 };

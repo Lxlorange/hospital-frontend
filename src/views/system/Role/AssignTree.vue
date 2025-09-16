@@ -94,7 +94,7 @@ const show = async (roleId: string, name: string) => {
   //显示弹框属性
   dialog.height = 450;
   dialog.width = 300;
-  dialog.title = "为【" + name + "】分配权限";
+  dialog.title = "为【" + name + "】修改权限";
   //获取树数据
   await getAssignTree();
   onShow();

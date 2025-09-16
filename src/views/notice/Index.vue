@@ -1,6 +1,5 @@
 <template>
   <el-main>
-    <!-- 查询栏 -->
     <el-form :model="searchParm" :inline="true" size="default">
       <el-form-item>
         <el-input
@@ -9,18 +8,17 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button icon="Search" @click="searchBtn">查询</el-button>
+        <el-button type="success" icon="Search" @click="searchBtn">查询</el-button>
         
         <el-button
           v-if="global.$hasPerm(['sys:notice:add'])"
-          type="primary"
+          style="background: linear-gradient(to right, #8a2be2, #4169e1); color: white; border: none;"
           icon="Plus"
           @click="addBtn"
           >创建</el-button
         >
       </el-form-item>
     </el-form>
-    <!-- 表格数据 -->
     <el-table :height="tableHeight" :data="tableList" border stripe>
       <el-table-column prop="noticeTitle" label="信息标题"></el-table-column>
       <el-table-column prop="noticeText" label="信息内容"></el-table-column>
@@ -34,7 +32,7 @@
         <template #default="scope">
           <el-button
             v-if="global.$hasPerm(['sys:notice:edit'])"
-            type="primary"
+            type="warning"
             icon="Edit"
             size="default"
             @click="editBtn(scope.row)"
@@ -45,13 +43,13 @@
             type="danger"
             icon="Delete"
             size="default"
+            plain
             @click="deleteBtn(scope.row)"
             >删除</el-button
           >
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页 -->
     <el-pagination
       @size-change="sizeChange"
       @current-change="currentChange"
@@ -64,7 +62,6 @@
     >
     </el-pagination>
 
-    <!-- 创建弹框 -->
     <SysDialog
       :title="dialog.title"
       :width="dialog.width"

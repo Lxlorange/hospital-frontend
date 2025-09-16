@@ -11,7 +11,7 @@ export type RoleListParm = {
     roleName:string;
     total:number;
 }
-//分配权限数据类型
+//修改权限数据类型
 export type SaveMenuParm = {
     roleId:string;
     list:Array<string>;

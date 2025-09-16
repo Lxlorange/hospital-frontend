@@ -1,6 +1,5 @@
 <template>
   <el-main>
-    <!-- 查询栏 -->
     <el-form :model="searchParm" :inline="true" size="default">
       <el-form-item>
         <el-input
@@ -9,13 +8,12 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button icon="Search" @click="searchBtn">查询</el-button>
+        <el-button type="success" icon="Search" @click="searchBtn">查询</el-button>
         
-        <el-button v-if="global.$hasPerm(['sys:department:add'])" type="primary" icon="Plus" @click="addBtn">创建</el-button>
+        <el-button v-if="global.$hasPerm(['sys:department:add'])" style="background: linear-gradient(to right, #4CAF50, #2196F3); color: white; border: none;" icon="Plus" @click="addBtn">创建</el-button>
       </el-form-item>
     </el-form>
-    <!-- 表格数据 -->
-     <el-table :data="tableList" :height="tableHeight" border stripe>
+    <el-table :data="tableList" :height="tableHeight" border stripe>
       <el-table-column prop="deptName" label="科室名称"></el-table-column>
       <el-table-column prop="phone" label="科室电话"></el-table-column>
       <el-table-column prop="orderNum" label="科室序号"></el-table-column>
@@ -33,7 +31,7 @@
         <template #default="scope">
           <el-button
             v-if="global.$hasPerm(['sys:department:edit'])"
-            type="primary"
+            type="warning"
             icon="Edit"
             size="default"
             @click="editBtn(scope.row)"
@@ -44,14 +42,14 @@
             type="danger"
             icon="Delete"
             size="default"
+            plain
             @click="deleteBtn(scope.row)"
             >删除</el-button
           >
         </template>
       </el-table-column>
      </el-table>
-     <!-- 分页 -->
-      <el-pagination
+     <el-pagination
         @size-change="sizeChange"
         @current-change="currentChange"
         :current-page.sync="searchParm.currentPage"
@@ -61,7 +59,6 @@
         :total="searchParm.total" background>
       </el-pagination>
       
-    <!-- 创建弹框 -->
     <SysDialog
       :title="dialog.title"
       :width="dialog.width"

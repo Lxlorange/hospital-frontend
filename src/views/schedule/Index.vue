@@ -1,6 +1,5 @@
 <template>
   <el-main height="">
-    <!-- 查询栏 -->
     <el-form :model="searchParm" :inline="true" size="default">
       <el-form-item>
         <el-input
@@ -9,21 +8,20 @@
         ></el-input>
       </el-form-item>
       <el-form-item>
-        <el-button icon="Search" @click="searchBtn">查询</el-button>
+        <el-button type="primary" icon="Search" @click="searchBtn">查询</el-button>
         
         <el-button
           v-if="global.$hasPerm(['sys:scheduleDetail:add'])"
-          type="primary"
+          style="background: linear-gradient(45deg, #42b983 30%, #5cb85c 90%); color: white; border: none;"
           icon="Plus"
           @click="addBtn"
           >创建</el-button
         >
-        <el-button icon="Delete" @click="handlerMuchDel" type="danger"
+        <el-button icon="Delete" @click="handlerMuchDel" type="danger" plain
           >删除</el-button
         >
       </el-form-item>
     </el-form>
-    <!-- 表格数据 -->
     <el-table
       :height="tableHeight"
       :data="tableList"
@@ -62,7 +60,7 @@
         <template #default="scope">
           <el-button
             v-if="global.$hasPerm(['sys:scheduleDetail:edit'])"
-            type="primary"
+            type="warning"
             icon="Edit"
             size="default"
             @click="editBtn(scope.row)"
@@ -79,7 +77,6 @@
         </template>
       </el-table-column>
     </el-table>
-    <!-- 分页 -->
     <el-pagination
       @size-change="sizeChange"
       @current-change="currentChange"
@@ -91,7 +88,6 @@
       background
     >
     </el-pagination>
-    <!-- 修改：只能修改 放号 和 是否出诊 -->
     <SysDialog
       :title="dialog.title"
       :width="dialog.width"
