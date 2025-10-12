@@ -17,7 +17,7 @@
       <el-table-column prop="deptName" label="科室名称"></el-table-column>
       <el-table-column prop="phone" label="科室电话"></el-table-column>
       <el-table-column prop="orderNum" label="科室序号"></el-table-column>
-      <el-table-column prop="toHome" label="数据中台">
+      <el-table-column prop="toHome" label="移动端">
         <template #default="scope">
           <el-tag v-if="scope.row.toHome == '0'" type="danger" size="default"
             >未显示</el-tag
@@ -85,7 +85,7 @@
           <el-form-item prop="orderNum" label="科室序号">
             <el-input v-model="addModel.orderNum"></el-input>
           </el-form-item>
-          <el-form-item prop="toHome" label="数据中台">
+          <el-form-item prop="toHome" label="移动端">
             <el-radio-group v-model="addModel.toHome">
               <el-radio :label="'0'">不显示</el-radio>
               <el-radio :label="'1'">显示</el-radio>
