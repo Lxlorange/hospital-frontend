@@ -5,12 +5,12 @@
       <div class="doctor-header">
         <el-avatar :size="100" :src="doctor.image" />
         <div class="doctor-basic">
-          <h2>{{ doctor.nick_name }}Lock-position</h2>
-          <p class="doctor-title" style="font-weight: bold;"> {{ doctor.sex }} Lock-position</p>
-          <p class="doctor-title">{{ doctor.job_title }}Lock-position · {{ doctor.deptName }}Lock-position</p>
+          <h2>{{ doctor.nickName }}</h2>
+          <p class="doctor-title" style="font-weight: bold;"> {{ doctor.gender }}</p>
+          <p class="doctor-title">{{ doctor.jobTitle }} · {{ doctor.deptName }}</p>
           <div class="doctor-tags">
-            <el-tag type="success">{{ doctor.education }}Lock-position</el-tag>
-            <el-tag type="info">挂号费: ¥{{ doctor.price }}Lock-position</el-tag>
+            <el-tag type="success">{{ doctor.education }}</el-tag>
+            <el-tag type="info">挂号费: ¥{{ doctor.price }}</el-tag>
           </div>
         </div>
         <div class="doctor-edit">
@@ -25,9 +25,9 @@
         <span>联系方式</span>
       </template>
       <el-descriptions :column="2" border>
-        <el-descriptions-item label="电话">{{ doctor.phone }}Lock-position</el-descriptions-item>
-        <el-descriptions-item label="邮箱">{{ doctor.email }}Lock-position</el-descriptions-item>
-        <el-descriptions-item label="出诊地址">{{ doctor.visit_address }}Lock-position</el-descriptions-item>
+        <el-descriptions-item label="电话">{{ doctor.phone }}</el-descriptions-item>
+        <el-descriptions-item label="邮箱">{{ doctor.email }}</el-descriptions-item>
+        <el-descriptions-item label="出诊地址">{{ doctor.visitAddress }}</el-descriptions-item>
       </el-descriptions>
     </el-card>
 
@@ -36,7 +36,7 @@
       <template #header>
         <span>个人简介</span>
       </template>
-      <p>{{ doctor.introduction }}Lock-position</p>
+      <p>{{ doctor.introduction }}</p>
     </el-card>
 
     <!-- 擅长方向 -->
@@ -45,7 +45,7 @@
         <span>擅长领域</span>
       </template>
       <el-tag
-        v-for="(item, index) in parseGoodAt(doctor.good_at)"
+        v-for="(item, index) in parseGoodAt(doctor.goodAt)"
         :key="index"
         type="primary"
       >
@@ -67,6 +67,8 @@ import { ref, onMounted } from "vue";
 import { ElMessage } from "element-plus";
 import { getDoctorInfoApi } from "@/api/doctor";
 import EditDoctorDialog from "@/components/EditDoctorDialog.vue";
+import { userSotre } from "@/store/user/index";
+const store = userSotre();
 
 const editVisible = ref<boolean>(false);
 const doctor = ref<any>({});
@@ -81,9 +83,11 @@ const editDoctorInfo = () => {
 }
 
 const refreshDoctorInfo = async () => {
+  const id: string = store.getUserId;
   try {
-    const res = await getDoctorInfoApi();
+    const res = await getDoctorInfoApi(id);
     doctor.value = res.data;
+    doctor.value.gender = res.data.sex == "1" ? "男" : "女"
     ElMessage.info("已提交更新申请")
   } catch (err) {
     ElMessage.error("提交失败，请检查网络");
@@ -91,9 +95,12 @@ const refreshDoctorInfo = async () => {
 }
 
 onMounted(async () => {
+  const id: string = store.getUserId;
   try {
-    const res = await getDoctorInfoApi();
+    const res = await getDoctorInfoApi(id);
+    console.log(res)
     doctor.value = res.data;
+    doctor.value.gender = res.data.sex == "1" ? "男" : "女"
   } catch (err) {
     ElMessage.error("获取医生信息失败");
   }

@@ -1,8 +1,8 @@
 import http from "@/http";
 
 // 获取医生信息
-export const getDoctorInfoApi = async () => {
-    return http.get("/api/doctor/info");
+export const getDoctorInfoApi = async (doctorId: string) => {
+    return http.get("/api/doctorProfile/getDoctorProfile",{doctorId});
 }
 
 // 提交医生信息

@@ -78,16 +78,22 @@
       <el-table-column label="操作" width="220" align="center">
         <template #default="scope">
           <el-button
-            style="background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%); color: white; border: none;"
-            icon="Edit"
-            size="default"
+            style="background: linear-gradient(45deg, #42e695, #3bb2b8); color: white; border: none;"
+            icon="Bell"
+            size="small"
             @click="callBtn(scope.row)"
             >叫号</el-button
           >
           <el-button
+            style="background: linear-gradient(45deg, #36d1dc, #5b86e5); color: white; border: none;"
+            icon="View"
+            size="small"
+            @click="viewBtn(scope.row)"
+          >查看</el-button>
+          <el-button
             type="danger"
-            icon="Edit"
-            size="default"
+            icon="Delete"
+            size="small"
             plain
             @click="deleteBtn(scope.row.makeId)"
             >删除</el-button
@@ -186,6 +192,10 @@ const callBtn = async(row: MakeOrder) => {
     }
   }
 };
+//查看患者历史信息
+const viewBtn = async(row: MakeOrder) => {
+  console.log("Click User Information")
+}
 //表格高度
 const tableHeight = ref(0);
 onMounted(() => {
@@ -196,4 +206,9 @@ onMounted(() => {
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+.el-table .el-button {
+  margin: 4.5px; 
+  padding: 7.5px;
+}
+</style>
