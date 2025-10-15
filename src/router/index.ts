@@ -10,12 +10,12 @@ export const constantRoutes: Array<RouteRecordRaw> = [
   {
     path: '/',
     component: Layout,
-    redirect: '/dashboard',
+    redirect: '/dataPlat',
     children: [
       {
-        path: '/dashboard',
-        component: () => import('@/views/dashboard/Index.vue'),
-        name: 'dashboard',
+        path: '/dataPlat',
+        component: () => import('@/views/dataPlat/Index.vue'),
+        name: 'dataPlat',
         meta: {
           title: '数据中台',
           icon: 'House'

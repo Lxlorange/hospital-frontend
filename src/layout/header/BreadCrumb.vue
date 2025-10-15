@@ -18,8 +18,8 @@ const getBredcrumb = () => {
   //获取第一个数据
   const first = mached[0];
   //判断是否是数据中台，不是，自己构造
-  if (first.path !== "/dashboard") {
-    mached = [{ path: "/dashboard", meta: { title: "数据中台" } } as any].concat(
+  if (first.path !== "/dataPlat") {
+    mached = [{ path: "/dataPlat", meta: { title: "数据中台" } } as any].concat(
       mached
     );
   }

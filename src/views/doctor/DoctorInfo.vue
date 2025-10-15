@@ -40,10 +40,10 @@
       <p>{{ doctor.introduction }}</p>
     </el-card>
 
-    <!-- 擅长方向 -->
+    <!-- 专业方向 -->
     <el-card shadow="never" class="skills-card">
       <template #header>
-        <span>擅长领域</span>
+        <span>专业领域</span>
       </template>
       <el-tag
         v-for="(item, index) in parseGoodAt(doctor.goodAt)"

@@ -12,7 +12,7 @@ const router = useRouter()
 const closeCurrent = () => {
   const targetName = route.path;
   //数据中台不能关闭
-  if(targetName === '/dashboard') return;
+  if(targetName === '/dataPlat') return;
   //选项卡数据
   const tabs = store.getTab;
   //当前激活的选项卡数据
@@ -50,12 +50,12 @@ const closeLeft = ()=>{
 const closeAll = ()=>{
   store.tabList.splice(0,store.tabList.length)
   const tab:Tab = {
-    path:'/dashboard',
+    path:'/dataPlat',
     title:'数据中台'
   }
   store.addTab(tab)
   //跳转数据中台
-  router.push({path:'/dashboard'})
+  router.push({path:'/dataPlat'})
 }
 </script>
 

@@ -271,7 +271,7 @@
               v-model="addModel.introduction"
             ></el-input>
           </el-form-item>
-          <el-form-item prop="goodAt" label="擅长：">
+          <el-form-item prop="goodAt" label="专业：">
             <el-input
               :rows="3"
               type="textarea"
@@ -458,7 +458,7 @@ const rules = reactive({
     {
       required: true,
       trigger: ["blur"],
-      message: "填写医生擅长的病症",
+      message: "填写医生专业的病症",
     },
   ],
   visitAddress: [

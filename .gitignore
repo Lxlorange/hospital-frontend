@@ -5,3 +5,5 @@ src/views/announce
 src/views/call
 src/views/journal
 src/views/see
+src/views/patient
+src/views/schedule

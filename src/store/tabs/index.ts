@@ -25,7 +25,7 @@ export const tabStore = defineStore('tabStore', {
         addTab(tab:Tab){
             //判断数据是否存在选项卡里面
             if(this.tabList.some(item=>item.path === tab.path)) return;
-            if(tab.path == '/dashboard'){
+            if(tab.path == '/dataPlat'){
                 //如果是数据中台，加到第一个
                 this.tabList.unshift(tab)
             }else{

@@ -13,13 +13,13 @@ export const menuStore = defineStore('menuStore', {
             //菜单数据
             menuList: [
                 {
-                    path: '/dashboard',
+                    path: '/dataPlat',
                     component: 'Layout',
-                    name: 'dashboard',
+                    name: 'dataPlat',
                     meta: {
                         title: '数据中台',
                         icon: 'HomeFilled',
-                        roles: ['sys:dashboard']
+                        roles: ['sys:dataPlat']
                     }
                 }
             ]

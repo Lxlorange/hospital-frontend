@@ -27,7 +27,7 @@
       <el-form-item label="简介">
         <el-input type="textarea" v-model="form.introduction" rows="3" />
       </el-form-item>
-      <el-form-item label="擅长">
+      <el-form-item label="专业">
         <el-input type="textarea" v-model="form.good_at" rows="2" />
       </el-form-item>
     </el-form>

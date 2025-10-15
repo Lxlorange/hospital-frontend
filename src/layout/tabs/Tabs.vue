@@ -43,7 +43,7 @@ const clickBtn = (pane: TabsPaneContext)=>{
 //删除
 const removeTab = (targetName: string) => {
   //数据中台不能关闭
-  if(targetName === '/dashboard') return;
+  if(targetName === '/dataPlat') return;
   //选项卡数据
   const tabs = tabsList.value
   //当前激活的选项卡数据
