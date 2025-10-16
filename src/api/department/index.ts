@@ -1,4 +1,24 @@
+// src/api/department/index.ts
+
 import http from "@/http";
+
+/**
+ * 通用的API响应体结构
+ * T 是 data 字段的类型
+ */
+export type ApiResponse<T> = {
+    code: number;
+    msg: string;
+    data: T;
+}
+
+/**
+ * 通用的下拉选择框数据类型
+ */
+export type SelectType = {
+    label: string;
+    value: string;
+}
 //定义科室类型
 export type Department = {
     deptId:string;
@@ -11,7 +31,7 @@ export type Department = {
 export const addApi = (parm:Department)=>{
     return http.post("/api/department",parm)
 }
-//列表参数类型
+
 //列表查询参数
 export type DepartmentPageParm = {
     currentPage:number,
@@ -33,5 +53,5 @@ export const deleteApi = (deptId:string)=>{
 }
 //科室下拉列表
 export const getSelectDeptApi = () => {
-    return http.get("/api/department/getSelectDept")
+    return http.get<ApiResponse<SelectType[]>>("/api/department/getSelectDept")
 }

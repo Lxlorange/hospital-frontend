@@ -1,76 +1,79 @@
+// src/api/schedule/index.ts
+
 import http from "@/http";
-//数据类型
-export type ScheduleDetail = {
-	detailId: string,
-	scheduleId: string,
-	doctorId: string,
-	times: string,
-	week: string,
-	witchWeek: string,
-	type: string,
-	amount: number,
-    lastAmount:number,
-	doctorName: string
-}
-//列表查询参数
-export type ScheduleDetailPageParm = {
-    currentPage:number,
-    pageSize:number,
-    total:number
-}
-//下拉数据类型
-export type SelectType = {
-	label:string;
-	value:number;
-}
-//数据类型
-export type Schedule = {
-	scheduleId: string,
-	doctorId: string,
-	doctorName: string,
-	departmentName: string,
-	weekOneM: number,
-	weekTwoM: number,
-	weekThreeM: number,
-	weekFourM: number,
-	weekFiveM: number,
-	weekSixM: number,
-	weekZeroM: number,
-	weekOne: string,
-	weekTwo: string,
-	weekThree: string,
-	weekFour: string,
-	weekFive: string,
-	weekSix: string,
-	weekZero: string,
-	week: string,
-	details:ScheduleDetail[]
-}
-//列表查询参数
-export type SchedulePageParm = {
-    currentPage:number,
-    pageSize:number,
-    total?:number,
-	doctorName:string,
+// 从 department API 文件导入通用类型
+import { ApiResponse, SelectType } from "../department";
+
+// ================== 1. 数据模型 (TypeScript Types) ==================
+
+// --- 模板相关类型 ---
+export type TemplateSlot = {
+  slotId?: string;
+  slotType: string;
+  totalAmount: number;
+  price: number;
 }
 
-//排班保存
-export const scheduleAddApi = (parm:any) => {
-    return http.post("/api/scheduleDetail/add",parm)
+export type ScheduleTemplate = {
+  templateId?: string;
+  doctorId: string;
+  dayOfWeek: number;
+  timeSlot: number;
+  slots: TemplateSlot[];
 }
-//查询列表
-export const getListApi = (parm:SchedulePageParm)=>{
-    return http.get("/api/scheduleDetail/getList",parm)
+
+// --- 实例相关类型 ---
+export type InstanceSlot = {
+  instanceSlotId?: string;
+  slotType: string;
+  totalAmount: number;
+  availableAmount: number;
+  price: number;
 }
-//排班修改
-export const scheduleEditApi = (parm:any) => {
-    return http.put("/api/scheduleDetail/edit",parm)
+
+export type ScheduleInstance = {
+  instanceId: string;
+  doctorId: string;
+  doctorName: string;
+  departmentName: string;
+  scheduleDate: string;
+  timeSlot: number;
+  status: number;
+  slots: InstanceSlot[];
 }
-//删除排班
-export const delListApi = (parm:any) => {
-    return http.post("/api/scheduleDetail/delList",parm)
+
+// --- API 参数类型 ---
+export type InstanceQueryParm = {
+    startDate: string;
+    endDate: string;
+    deptId?: string;
+    doctorId?: string;
 }
-//排班删除
-export const scheduleDeleteApi = (scheduledetailId:string) => {
-    return http.delete(`/api/scheduleDetail/${scheduledetailId}`)
+
+// ================== 2. API 请求函数 (已修复返回类型) ==================
+
+// --- 模板管理 API ---
+export const getTemplateApi = (doctorId: string) => {
+    return http.get<ApiResponse<ScheduleTemplate[]>>(`/api/schedule/template/${doctorId}`);
+}
+
+export const saveTemplateApi = (doctorId: string, templates: ScheduleTemplate[]) => {
+    return http.post<ApiResponse<null>>(`/api/schedule/template/${doctorId}`, templates);
+}
+
+// --- 排班实例 API ---
+export const generateInstancesApi = (params: { startDate: string, endDate: string }) => {
+    return http.post<ApiResponse<null>>("/api/schedule/instance/generate", params);
+}
+
+export const getInstancesApi = (params: InstanceQueryParm) => {
+    return http.get<ApiResponse<ScheduleInstance[]>>("/api/schedule/instance", params);
+}
+
+export const updateInstanceStatusApi = (instanceId: string, status: number) => {
+    return http.put<ApiResponse<null>>(`/api/schedule/instance/${instanceId}/status`, { status });
+}
+
+export const addInstanceApi = (instanceData: Omit<ScheduleInstance, 'instanceId'>) => {
+    return http.post<ApiResponse<null>>("/api/schedule/instance", instanceData);
 }
