@@ -1,152 +1,160 @@
 <template>
-  <el-main>
-    <el-form :model="searchParm" :inline="true" size="default">
-      <el-form-item>
-        <el-input
-          placeholder="输入姓名"
-          v-model="searchParm.nickName"
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-input
-          placeholder="输入电话"
-          v-model="searchParm.phone"
-        ></el-input>
-      </el-form-item>
-      <el-form-item>
-        <el-button type="success" icon="Search" @click="searchBtn">查询</el-button>
-        <el-button
-          v-if="global.$hasPerm(['sys:user:add'])"
-          icon="Plus"
-          style="
-            background: linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%);
-            color: white;
-            border: none;
+  <el-main class="main-container">
+    <el-card shadow="never" class="content-card">
+      <el-form :model="searchParm" :inline="true" size="default" class="search-form">
+        <el-form-item>
+          <el-input
+            placeholder="输入姓名"
+            v-model="searchParm.nickName"
+            class="search-input"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-input
+            placeholder="输入电话"
+            v-model="searchParm.phone"
+            class="search-input"
+            clearable
+          ></el-input>
+        </el-form-item>
+        <el-form-item>
+          <el-button class="custom-btn btn-query" icon="Search" @click="searchBtn">查询</el-button>
+          <el-button
+            v-if="global.$hasPerm(['sys:user:add'])"
+            class="custom-btn btn-create"
+            icon="Plus"
+            @click="addBtn"
+            >创建</el-button
+          >
+        </el-form-item>
+      </el-form>
+
+      <el-table :height="tableHeight" :data="tableList" border stripe class="data-table">
+        <el-table-column align="center" label="照片" prop="image">
+          <template #default="scope">
+            <el-image
+              v-if="scope.row.image"
+              style="width: 60px; height: 60px; border-radius: 50%"
+              :src="imgbase + scope.row.image.split(',')[0]"
+            />
+          </template>
+        </el-table-column>
+        <el-table-column prop="nickName" label="姓名"></el-table-column>
+        <el-table-column prop="deptName" label="科室"></el-table-column>
+        <el-table-column prop="sex" label="性别">
+          <template #default="scope">
+            <el-tag
+              v-if="scope.row.sex == '0'"
+              type="primary"
+              size="default"
+              effect="light"
+              >男</el-tag
+            >
+            <el-tag
+              v-if="scope.row.sex == '1'"
+              type="danger"
+              size="default"
+              effect="light"
+              >女</el-tag
+            >
+          </template>
+        </el-table-column>
+        <el-table-column prop="phone" label="电话"></el-table-column>
+        <el-table-column prop="email" label="邮箱"></el-table-column>
+        <el-table-column prop="visitAddress" label="出诊室"></el-table-column>
+        <el-table-column prop="username" label="用户名"></el-table-column>
+        <el-table-column prop="sex" label="数据中台">
+          <template #default="scope">
+            <el-tag
+              v-if="scope.row.toHome == '0'"
+              type="warning"
+              size="default"
+              effect="light"
+              >未</el-tag
+            >
+            <el-tag
+              v-if="scope.row.toHome == '1'"
+              type="primary"
+              size="default"
+              effect="light"
+              >已</el-tag
+            >
+          </template>
+        </el-table-column>
+        <el-table-column prop="sex" label="在职">
+          <template #default="scope">
+            <el-switch
+              v-model="scope.row.enabled"
+              :active-value="true"
+              :inactive-value="false"
+              :before-change="beforeStatus.bind(global, scope.row)"
+              @change="changStatus(scope.row.userId)"
+              style="
+                --el-switch-on-color: #13ce66;
+                --el-switch-off-color: #ff4949;
+              "
+            />
+          </template>
+        </el-table-column>
+        <el-table-column
+          v-if="
+            global.$hasPerm([
+              'sys:user:edit',
+              'sys:user:reset',
+              'sys:user:delete',
+            ])
           "
-          @click="addBtn"
-          >创建</el-button
+          align="center"
+          width="340"
+          label="操作"
+          fixed="right"
         >
-      </el-form-item>
-    </el-form>
-    <el-table :height="tableHeight" :data="tableList" border stripe>
-      <el-table-column align="center" label="照片" prop="image">
-        <template #default="scope">
-          <el-image
-            v-if="scope.row.image"
-            style="width: 80px; height: 80px; border-radius: 50%"
-            :src="imgbase + scope.row.image.split(',')[0]"
-          />
-        </template>
-      </el-table-column>
-      <el-table-column prop="nickName" label="姓名"></el-table-column>
-      <el-table-column prop="deptName" label="科室"></el-table-column>
-      <el-table-column prop="sex" label="性别">
-        <template #default="scope">
-          <el-tag
-            v-if="scope.row.sex == '0'"
-            type="primary"
-            size="default"
-            effect="dark"
-            >男</el-tag
-          >
-          <el-tag
-            v-if="scope.row.sex == '1'"
-            type="danger"
-            size="default"
-            effect="dark"
-            >女</el-tag
-          >
-        </template>
-      </el-table-column>
-      <el-table-column prop="phone" label="电话"></el-table-column>
-      <el-table-column prop="email" label="邮箱"></el-table-column>
-      <el-table-column prop="visitAddress" label="出诊室"></el-table-column>
-      <el-table-column prop="username" label="用户名"></el-table-column>
-      <el-table-column prop="sex" label="数据中台">
-        <template #default="scope">
-          <el-tag
-            v-if="scope.row.toHome == '0'"
-            type="warning"
-            size="default"
-            effect="dark"
-            >未</el-tag
-          >
-          <el-tag
-            v-if="scope.row.toHome == '1'"
-            type="primary"
-            size="default"
-            effect="dark"
-            >已</el-tag
-          >
-        </template>
-      </el-table-column>
-      <el-table-column prop="sex" label="在职">
-        <template #default="scope">
-          <el-switch
-            v-model="scope.row.enabled"
-            :active-value="true"
-            :inactive-value="false"
-            :before-change="beforeStatus.bind(global, scope.row)"
-            @change="changStatus(scope.row.userId)"
-            style="
-              --el-switch-on-color: #13ce66;
-              --el-switch-off-color: #ff7670;
-            "
-          />
-        </template>
-      </el-table-column>
-      <el-table-column
-        v-if="
-          global.$hasPerm([
-            'sys:user:edit',
-            'sys:user:reset',
-            'sys:user:delete',
-          ])
-        "
-        align="center"
-        width="320"
-        label="操作"
-      >
-        <template #default="scope">
-          <el-button
-            v-if="global.$hasPerm(['sys:user:edit'])"
-            type="success"
-            icon="Edit"
-            size="default"
-            @click="editBtn(scope.row)"
-            >修改</el-button
-          >
-          <el-button
-            v-if="global.$hasPerm(['sys:user:reset'])"
-            type="info"
-            icon="Setting"
-            size="default"
-            @click="resetPasswordBtn(scope.row.userId)"
-            >重置密码</el-button
-          >
-          <el-button
-            v-if="global.$hasPerm(['sys:user:delete'])"
-            type="danger"
-            icon="Delete"
-            size="default"
-            plain
-            @click="deleteBtn(scope.row.userId)"
-            >删除</el-button
-          >
-        </template>
-      </el-table-column>
-    </el-table>
-    <el-pagination
-      @size-change="sizeChange"
-      @current-change="currentChange"
-      :current-page.sync="searchParm.currentPage"
-      :page-sizes="[10, 20, 40, 80, 100]"
-      :page-size="searchParm.pageSize"
-      layout="total, sizes, prev, pager, next, jumper"
-      :total="searchParm.total"
-      background
-    >
-    </el-pagination>
+          <template #default="scope">
+            <div class="operation-buttons">
+              <el-button
+                v-if="global.$hasPerm(['sys:user:edit'])"
+                class="custom-btn btn-edit"
+                icon="Edit"
+                size="default"
+                @click="editBtn(scope.row)"
+                >修改</el-button
+              >
+              <el-button
+                v-if="global.$hasPerm(['sys:user:reset'])"
+                class="custom-btn btn-reset"
+                icon="Setting"
+                size="default"
+                @click="resetPasswordBtn(scope.row.userId)"
+                >重置密码</el-button
+              >
+              <el-button
+                v-if="global.$hasPerm(['sys:user:delete'])"
+                class="custom-btn btn-delete"
+                icon="Delete"
+                size="default"
+                @click="deleteBtn(scope.row.userId)"
+                >删除</el-button
+              >
+            </div>
+          </template>
+        </el-table-column>
+      </el-table>
+
+      <div class="pagination-container">
+        <el-pagination
+          @size-change="sizeChange"
+          @current-change="currentChange"
+          :current-page.sync="searchParm.currentPage"
+          :page-sizes="[10, 20, 40, 80, 100]"
+          :page-size="searchParm.pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="searchParm.total"
+          background
+        >
+        </el-pagination>
+      </div>
+    </el-card>
 
     <SysDialog
       :title="dialog.title"
@@ -300,6 +308,7 @@
 </template>
 
 <script setup lang="ts">
+// ---------- Script 部分完全没有改动，保持原样 ----------
 import { computed, nextTick, onMounted, reactive, ref } from "vue";
 import SysDialog from "@/components/SysDialog.vue";
 import useDialog from "@/hooks/useDialog";
@@ -722,9 +731,116 @@ const changStatus = async (userId: string) => {
 onMounted(() => {
   getList();
   nextTick(() => {
-    tableHeight.value = window.innerHeight - 240;
+    tableHeight.value = window.innerHeight - 260; // 调整高度以适应新布局
   });
 });
 </script>
 
-<style scoped></style>
+<style scoped>
+/* ---------- 这是新增的 Style 部分 ---------- */
+.main-container {
+  background-color: #f0f2f5;
+  padding: 20px;
+  height: 100%;
+  box-sizing: border-box;
+}
+
+.content-card {
+  border-radius: 8px;
+  border: none;
+  padding: 20px;
+}
+
+.search-form {
+  margin-bottom: 20px;
+}
+
+.search-input {
+  width: 220px;
+}
+
+:deep(.search-input .el-input__wrapper) {
+  border-radius: 6px;
+  transition: all 0.3s;
+}
+
+:deep(.search-input .el-input__wrapper:hover) {
+  border-color: #409eff;
+}
+
+.custom-btn {
+  border: none;
+  border-radius: 6px;
+  color: #fff;
+  padding: 8px 20px;
+  font-size: 14px;
+  transition: all 0.3s ease;
+  cursor: pointer;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+}
+
+.custom-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 12px rgba(0, 0, 0, 0.15);
+}
+
+.custom-btn:active {
+  transform: translateY(0);
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.custom-btn .el-icon {
+  vertical-align: middle;
+  margin-right: 5px;
+}
+
+.btn-query {
+  background: linear-gradient(45deg, #2196f3 30%, #4db6ac 90%);
+}
+
+.btn-create {
+  background: linear-gradient(45deg, #fe6b8b 30%, #ff8e53 90%);
+}
+
+.btn-edit {
+  background: linear-gradient(45deg, #67c23a 30%, #85ce61 90%);
+}
+
+.btn-reset {
+  background: linear-gradient(45deg, #909399 30%, #b0b3b8 90%);
+}
+
+.btn-delete {
+  background: linear-gradient(45deg, #f44336 30%, #e57373 90%);
+}
+
+.data-table {
+  width: 100%;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+:deep(.data-table th.el-table__cell) {
+  background-color: #fafafa !important;
+  color: #333;
+  font-weight: 600;
+}
+
+:deep(.el-table__body tr:hover > td) {
+  background-color: #ecf5ff !important;
+}
+
+.pagination-container {
+  margin-top: 25px;
+  display: flex;
+  justify-content: flex-end;
+}
+
+/* 2. 为按钮包裹容器添加样式 */
+.operation-buttons {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+}
+</style>

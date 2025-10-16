@@ -7,19 +7,22 @@
   >
     <el-form :model="form" label-width="100px" style="margin-top: 10px;">
       <el-form-item label="姓名">
-        <el-input v-model="form.nick_name" />
+        <el-input v-model="form.nickName" />
       </el-form-item>
       <el-form-item label="性别">
         <el-select v-model="form.sex" placeholder="选择性别">
-          <el-option label="男" value="男" />
-          <el-option label="女" value="女" />
+          <el-option label="男" value="1" />
+          <el-option label="女" value="0" />
         </el-select>
       </el-form-item>
       <el-form-item label="职称">
-        <el-input v-model="form.job_title" />
+        <el-input v-model="form.jobTitle" />
       </el-form-item>
       <el-form-item label="科室">
         <el-input v-model="form.deptName" />
+      </el-form-item>
+      <el-form-item label="出诊地址">
+        <el-input v-model="form.visitAddress" />
       </el-form-item>
       <el-form-item label="学历">
         <el-input v-model="form.education" />
@@ -27,8 +30,8 @@
       <el-form-item label="简介">
         <el-input type="textarea" v-model="form.introduction" rows="3" />
       </el-form-item>
-      <el-form-item label="专业">
-        <el-input type="textarea" v-model="form.good_at" rows="2" />
+      <el-form-item label="擅长内容">
+        <el-input type="textarea" v-model="form.goodAt" rows="2" />
       </el-form-item>
     </el-form>
 
@@ -42,24 +45,14 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { updateDoctorInfoApi } from "@/api/doctor";
-
-interface Doctor {
-  nick_name: string;
-  sex: string;
-  job_title: string;
-  deptName: string;
-  education: string;
-  price: number;
-  introduction: string;
-  good_at: string;
-}
+import { DoctorType } from '../api/doctor/DoctorModel';
 
 const props = defineProps<{
   modelValue: boolean;
-  doctor: any;
+  doctor: DoctorType
 }>();
 
 const emits = defineEmits(["update:modelValue", "updated"]);
@@ -73,21 +66,12 @@ watch(
 
 watch(localVisible, (val) => emits("update:modelValue", val));
 
-const form = ref<Doctor>({
-  nick_name: "",
-  sex: "",
-  job_title: "",
-  deptName: "",
-  education: "",
-  price: 0,
-  introduction: "",
-  good_at: "",
-});
+const form = ref<DoctorType>({...props.doctor});
 
 watch(
   () => props.doctor,
-  (val) => {
-    if (val) form.value = { ...val };
+  (newVal) => {
+    form.value = { ...newVal }; // 生成新的副本，保证表单更新
   },
   { immediate: true }
 );
@@ -98,14 +82,15 @@ const close = () => {
 
 const submit = async () => {
   try {
-    await updateDoctorInfoApi();
-    ElMessage.success("资料已更新");
+    const doctor: DoctorType = {...form.value};
+    await updateDoctorInfoApi(doctor);
     emits("updated");
     close();
   } catch (err) {
     ElMessage.error("更新失败");
   }
 };
+
 </script>
 
 <style scoped>

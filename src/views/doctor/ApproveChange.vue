@@ -9,8 +9,12 @@
       </template>
 
       <el-table :data="requests" stripe style="width: 100%">
-        <el-table-column prop="doctor_name" label="医生姓名" width="150" />
-        <el-table-column prop="deptName" label="科室" width="150" />
+        <el-table-column prop="nickName" label="医生姓名" width="150" />
+        <el-table-column prop="createTime" label="时间" width="150" >
+          <template #default="{ row }">
+            {{ row.createTime ? row.createTime.split('T')[0] : '' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="status" label="状态" width="100">
           <template #default="{ row }">
             <el-tag
@@ -27,13 +31,13 @@
               size="small"
               type="success"
               @click="approve(row)"
-              :disabled="row.status !== 'pending'"
+              :disabled="row.status !== '0'"
             >批准</el-button>
             <el-button
               size="small"
               type="danger"
               @click="reject(row)"
-              :disabled="row.status !== 'pending'"
+              :disabled="row.status !== '0'"
             >驳回</el-button>
           </template>
         </el-table-column>
@@ -46,11 +50,10 @@
         <el-descriptions-item
           v-for="(val, key) in compareFields"
           :key="key"
-          :label="key"
+          :label="fieldLabels[key]"
         >
           <div>
-            <span class="old">原信息: {{ val.old || '无' }}</span><br />
-            <span class="new">新信息: {{ val.new || '无' }}</span>
+            <span class="new">{{ val || '无' }}</span>
           </div>
         </el-descriptions-item>
       </el-descriptions>
@@ -61,8 +64,10 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { getUpdateRequestsApi, approveRequestApi, rejectRequestApi } from "@/api/doctor";
+import { getUpdateRequestsApi, approveRequestApi } from "@/api/doctor";
+import { userSotre } from "@/store/user/index";
 
+const store = userSotre();
 const requests = ref<any[]>([]);
 const detailVisible = ref(false);
 const compareFields = ref<any>({});
@@ -70,7 +75,8 @@ const compareFields = ref<any>({});
 const fetchRequests = async () => {
   try {
     const res = await getUpdateRequestsApi();
-    requests.value = [{"id":"LOCK-POSITION"}]/*res.data*/;
+    console.log(res.data);
+    requests.value = res.data.records/*res.data*/;
   } catch {
     ElMessage.error("获取请求失败");
   }
@@ -78,11 +84,11 @@ const fetchRequests = async () => {
 
 const statusText = (status: string) => {
   switch (status) {
-    case "pending":
+    case "0":
       return "待审核";
-    case "approved":
+    case "1":
       return "已通过";
-    case "rejected":
+    case "2":
       return "已驳回";
     default:
       return "未知";
@@ -90,39 +96,69 @@ const statusText = (status: string) => {
 };
 
 const viewDetail = (row: any) => {
-  // 后端返回的数据中应包含 old_data 和 new_data 两部分
-  compareFields.value = {};
-  // const oldData = JSON.parse(row.old_data);
-  // const newData = JSON.parse(row.new_data);
   /** Demo Data */
-  const oldData = JSON.parse('{"id":"1","name":"a","gender":"male"}')
-  const newData = JSON.parse('{"id":"1","name":"a","gender":"female"}')
-
-  for (const key in newData) {
-    compareFields.value[key] = {
-      old: oldData[key],
-      new: newData[key],
-    };
-  }
-
+  compareFields.value = row
   detailVisible.value = true;
 };
 
 const approve = (row: any) => {
-  ElMessageBox.confirm("确定批准该修改吗？", "提示", { type: "warning" }).then(async () => {
-    await approveRequestApi(row.id);
-    ElMessage.success("已批准");
-    fetchRequests();
-  });
+  ElMessageBox.prompt("请输入审核意见：", "批准修改", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    inputPlaceholder: "例如：信息有效，予以通过",
+    type: "warning"
+  })
+    .then(async ({ value }) => {
+      const reviewComment = value || "信息有效，予以通过"; // 默认内容
+      await approveRequestApi(row.requestId, 1, reviewComment);
+      ElMessage.success("已批准");
+      fetchRequests();
+    })
+    .catch(() => {
+      ElMessage.info("已取消操作");
+    });
+};
+
+const fieldLabels: Record<string, string> = {
+  requestId: "请求编号",
+  doctorId: "医生编号",
+  username: "用户名",
+  nickName: "医生姓名",
+  introduction: "个人简介",
+  visitAddress: "坐诊地址",
+  goodAt: "擅长领域",
+  price: "挂号价格",
+  status: "审核状态",
+  reviewComment: "审核意见",
+  reviewerId: "审核人编号",
+  reviewTime: "审核时间",
+  createTime: "申请时间",
+  updateTime: "最后更新时间",
 };
 
 const reject = (row: any) => {
-  ElMessageBox.confirm("确定驳回该修改吗？", "提示", { type: "error" }).then(async () => {
-    await rejectRequestApi(row.id);
-    ElMessage.success("已驳回");
-    fetchRequests();
-  });
+  ElMessageBox.prompt("请输入驳回原因", "驳回修改", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    inputPlaceholder: "请输入审核意见",
+    inputValidator: (value) => {
+      if (!value || value.trim() === "") {
+        return "审核意见不能为空";
+      }
+      return true;
+    },
+    type: "warning",
+  })
+    .then(async ({ value }) => {
+      await approveRequestApi(row.requestId, 2, value); // 传入 reviewComment
+      ElMessage.success("已驳回");
+      fetchRequests();
+    })
+    .catch(() => {
+      ElMessage.info("已取消驳回");
+    });
 };
+
 
 onMounted(fetchRequests);
 </script>
