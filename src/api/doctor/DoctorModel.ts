@@ -1,17 +1,18 @@
 // 医生数据类型
 export type DoctorType = {
-    username:string,
-    password:string,
-    phone:string,
-    email:string,
-    sex:string,
-    Department:string,
-    education:string,
-    job_title:string, 
-    image:string,
-    introduction:string,
-    orderNum:string,
-    visit_address: string,
-    good_at: string,
-    price: string
+    username:string | undefined,
+    password:string | undefined,
+    phone:string | undefined,
+    email:string | undefined,
+    sex:string | undefined,
+    deptName:string | undefined,
+    education:string | undefined,
+    jobTitle:string | undefined, 
+    image:string | undefined,
+    introduction:string | undefined,
+    orderNum:string | undefined,
+    visitAddress: string | undefined,
+    goodAt: string | undefined,
+    price: number | undefined,
+    nickName: string | undefined
 } 
