@@ -61,10 +61,9 @@
           </template>
         </el-table-column>
         <el-table-column prop="phone" label="电话"></el-table-column>
-        <el-table-column prop="email" label="邮箱"></el-table-column>
         <el-table-column prop="visitAddress" label="出诊室"></el-table-column>
         <el-table-column prop="username" label="用户名"></el-table-column>
-        <el-table-column prop="sex" label="数据中台">
+        <el-table-column prop="sex" label="移动端">
           <template #default="scope">
             <el-tag
               v-if="scope.row.toHome == '0'"

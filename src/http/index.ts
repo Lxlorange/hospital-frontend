@@ -2,9 +2,8 @@ import axios, { AxiosInstance, InternalAxiosRequestConfig, AxiosResponse,AxiosRe
 import { ElMessage } from 'element-plus'
 import { userSotre } from "@/store/user";
 //axios的配置项
-const config = {
+const config: AxiosRequestConfig= {
     baseURL: 'http://localhost:8089', //求接口的地址
-    // baseURL: '/api',
     timeout: 10000,
     withCredentials:true
 }
@@ -27,98 +26,61 @@ class Http {
     //求发送、返回之后做处理
     private interceptors() {
         //求发送之前的处理：求头携带token
-        this.instance.interceptors.request.use((config: InternalAxiosRequestConfig) => {
-            let store = userSotre()
-            //获取token
-            let token = store.getToken;
-            if (token) {
-                config.headers!['token'] = token;
+        this.instance.interceptors.request.use(
+            (config: InternalAxiosRequestConfig) => {
+                const store = userSotre();
+                const token = store.getToken;
+                if (token && config.headers) {
+                    config.headers['token'] = token;
+                }
+                return config;
+            },
+            (error: any) => {
+                // 请求错误一般是网络问题或代码错误，这里简单处理
+                console.error("Request Error:", error);
+                return Promise.reject(error);
             }
-            return config;
-        }), (error: any) => {
-            error.data = {}
-            error.data.msg = '服务器异常联系管理员'
-            return error;
-        }
+        );
 
         //求返回之后的拦截器：可以根据后端返回的状态码，做想要提示
-        this.instance.interceptors.response.use((res: AxiosResponse) => {
-            const store = userSotre()
-            if (res.data.code == 600) {
-                //跳转到登录
-                store.setToken('')
-                store.setUserId('')
-                localStorage.clear()
-                window.location.href = '/login'
-            } else if (res.data.code == 200) {
-                return res.data
-            } else {
-                ElMessage.error(res.data.msg || '服务器出错!')
-                return Promise.reject(res.data.msg || '服务器出错')
-            }
-        }), (error: any) => {
-            console.log('进入错误')
-            error.data = {};
-            if (error && error.response) {
-                switch (error.response.status) {
-                    case 400:
-                        error.data.msg = '错误求';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 401:
-                        error.data.msg = '未授权，重新登录';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 403:
-                        error.data.msg = '拒绝访问';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 404:
-                        error.data.msg = '求错误,未找到接口';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 405:
-                        error.data.msg = '求方法未允许';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 408:
-                        error.data.msg = '求超时';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 500:
-                        error.data.msg = '后台接口出错';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 501:
-                        error.data.msg = '网络未实现';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 502:
-                        error.data.msg = '网络错误';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 503:
-                        error.data.msg = '服务不可用';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 504:
-                        error.data.msg = '网络超时';
-                        ElMessage.error(error.data.msg)
-                        break
-                    case 505:
-                        error.data.msg = 'http版本不支持该求';
-                        ElMessage.error(error.data.msg)
-                        break
-                    default:
-                        error.data.msg = `连接错误${error.response.status}`;
-                        ElMessage.error(error.data.msg)
+        this.instance.interceptors.response.use(
+            (res: AxiosResponse<Result>) => {
+                const store = userSotre();
+                const { code, msg } = res.data;
+                if (code === 600) { // 特定业务码：未登录或Token过期
+                    ElMessage.warning(msg || "登录状态已过期，请重新登录");
+                    store.setToken('');
+                    store.setUserId('');
+                    localStorage.clear();
+                    window.location.href = '/login';
+                    return Promise.reject(res.data);
+                } else if (code !== 200) { // 业务成功
+                    ElMessage.error(msg || '服务器出错!');
+                    return Promise.reject(res.data);
+                } else return res.data as any; //类型断言
+                // return res;
+            },
+            (error: any) => {
+                // HTTP状态码非2xx
+                console.error('Response Error:', error);
+
+                // 优先显示后端返回的错误信息
+                if (error.response && error.response.data && error.response.data.msg) {
+                    ElMessage.error(error.response.data.msg);
+                } else {
+                    // 如果后端没有返回具体信息，再根据HTTP状态码显示通用信息
+                    switch (error.response?.status) {
+                        case 400: ElMessage.error('请求参数错误'); break;
+                        case 401: ElMessage.error('未授权，请重新登录'); break;
+                        case 403: ElMessage.error('拒绝访问'); break;
+                        case 404: ElMessage.error('请求的资源不存在'); break;
+                        case 500: ElMessage.error('服务器内部错误'); break;
+                        default: ElMessage.error('网络错误，请稍后再试');
+                    }
                 }
-            } else {
-                error.data.msg = "连接到服务器失败";
-                ElMessage.error(error.data.msg)
+                return Promise.reject(error);
             }
-            return Promise.reject(error)
-        }
+        );
     }
     //post求
     post<T = Result>(url:string,data?:object):Promise<T>{
