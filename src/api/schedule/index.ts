@@ -11,7 +11,6 @@ export type TemplateSlot = {
   slotId?: string;
   slotType: string;
   totalAmount: number;
-  price: number;
 }
 
 export type ScheduleTemplate = {
