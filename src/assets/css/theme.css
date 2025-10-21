@@ -1,7 +1,7 @@
 /* 注意事项：白色统一用 white  */
 
 .green {
-    /* 标题字体颜色 */
+    /* 主题字体颜色 */
     --el-color-logo-color: white;
     /* 头部高度 */
     --el-header-height:60px;
@@ -42,7 +42,7 @@
   }
   
   .brown {
-    /* 标题字体颜色 */
+    /* 主题字体颜色 */
     --el-color-logo-color: white;
     /* 头部高度 */
     --el-header-height:60px;
@@ -83,7 +83,7 @@
   }
   
   .grape {
-    /* 标题字体颜色 */
+    /* 主题字体颜色 */
     --el-color-logo-color: white;
     /* 头部高度 */
     --el-header-height:60px;
@@ -123,7 +123,7 @@
     --el-text-bred-font-size: 16px;
   }
   .default {
-    /* 标题字体颜色 */
+    /* 主题字体颜色 */
     --el-color-logo-color: white;
     /* 头部高度 */
     --el-header-height:60px;
@@ -163,7 +163,7 @@
     --el-text-bred-font-size: 16px;
   }
   .blacks {
-    /* 标题字体颜色 */
+    /* 主题字体颜色 */
     --el-color-logo-color: white;
     /* 头部高度 */
     --el-header-height:60px;
@@ -203,7 +203,7 @@
     --el-text-bred-font-size: 16px;
   }
   .whites {
-    /* 标题字体颜色 */
+    /* 主题字体颜色 */
     --el-color-logo-color: white;
     /* 头部高度 */
     --el-header-height:60px;
@@ -243,7 +243,7 @@
     --el-text-bred-font-size: 16px;
   }
   .default1 {
-    /* 标题字体颜色 */
+    /* 主题字体颜色 */
     --el-color-logo-color: white;
     /* 头部高度 */
     --el-header-height:60px;

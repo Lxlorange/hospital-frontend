@@ -25,7 +25,6 @@
       <el-table :data="tableList" :height="tableHeight" border stripe class="data-table">
         <el-table-column prop="deptName" label="科室名称"></el-table-column>
         <el-table-column prop="phone" label="科室电话"></el-table-column>
-        <el-table-column prop="orderNum" label="科室数字"></el-table-column>
         <el-table-column prop="toHome" label="移动端">
           <template #default="scope">
             <el-tag v-if="scope.row.toHome == '0'" type="danger" size="default" effect="light"
