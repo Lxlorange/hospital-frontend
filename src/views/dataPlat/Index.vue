@@ -61,6 +61,7 @@
         <div class="card-header">
           <span>今日排班</span>
           <div class="schedule-buttons">
+            <el-button type="primary" size="small" @click="addConsultation()" style="margin-right: 15px;background-color: powderblue;color: black;">临时加号</el-button>
             <el-button type="primary" size="small" @click="getMySchedule('1')">本星期</el-button>
             <el-button type="warning" size="small" @click="getMySchedule('2')">下星期</el-button>
             <el-button type="success" size="small" @click="getMySchedule('3')">上星期</el-button>
@@ -87,6 +88,7 @@
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, reactive } from "vue";
+import { ElMessageBox, ElMessage } from "element-plus";
 // 导入 Element Plus 图标
 import {
   UserFilled,
@@ -95,6 +97,7 @@ import {
   Tickets
 } from "@element-plus/icons-vue";
 import {
+  addConsultationApi,
   getHomeTotalApi,
   getMyScheduleApi,
 } from "../../api/home/index";
@@ -128,6 +131,19 @@ const getMySchedule = async (type: string) => {
     schedule.value = res.data;
   }
 };
+
+const addConsultation = async () => {
+  const doctorId = strore.getUserId;
+  ElMessageBox.confirm("确认申请加号？", "加号", {
+    confirmButtonText: "确定",
+    cancelButtonText: "取消",
+    type: "warning"
+  }).then(async () => {
+      await addConsultationApi(doctorId);
+      ElMessage.success("已申请");
+  }).catch(() => {});
+};
+
 onMounted(() => {
   mianHeight.value = window.innerHeight - 100;
   getHomeTotal();
