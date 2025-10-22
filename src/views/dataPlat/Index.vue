@@ -61,7 +61,7 @@
         <div class="card-header">
           <span>今日排班</span>
           <div class="schedule-buttons">
-            <el-button type="primary" size="small" @click="addConsultation()" style="margin-right: 15px;background-color: powderblue;color: black;">临时加号</el-button>
+            <el-button type="primary" size="small" @click="addConsultation()" style="margin-right: 15px;background-color: powderblue;color: black;" v-show="showAddConsultationBtn">临时加号</el-button>
             <el-button type="primary" size="small" @click="getMySchedule('1')">本星期</el-button>
             <el-button type="warning" size="small" @click="getMySchedule('2')">下星期</el-button>
             <el-button type="success" size="small" @click="getMySchedule('3')">上星期</el-button>
@@ -132,6 +132,8 @@ const getMySchedule = async (type: string) => {
   }
 };
 
+//添加号源
+const showAddConsultationBtn = ref<boolean>(false);
 const addConsultation = async () => {
   const doctorId = strore.getUserId;
   ElMessageBox.confirm("确认申请加号？", "加号", {
@@ -144,7 +146,12 @@ const addConsultation = async () => {
   }).catch(() => {});
 };
 
-onMounted(() => {
+onMounted(() => {  
+  const userType:string = strore.getType;
+  if(userType == "0"){
+    showAddConsultationBtn.value = true;
+  }
+  console.log(showAddConsultationBtn.value)
   mianHeight.value = window.innerHeight - 100;
   getHomeTotal();
   getMySchedule("1");
