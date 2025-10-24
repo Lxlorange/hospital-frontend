@@ -96,7 +96,6 @@ const statusText = (status: string) => {
 };
 
 const viewDetail = (row: any) => {
-  /** Demo Data */
   compareFields.value = row
   detailVisible.value = true;
 };

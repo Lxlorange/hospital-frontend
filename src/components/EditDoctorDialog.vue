@@ -10,22 +10,22 @@
         <el-input v-model="form.nickName" />
       </el-form-item>
       <el-form-item label="性别">
-        <el-select v-model="form.sex" placeholder="选择性别">
+        <el-select v-model="form.sex" disabled placeholder="选择性别">
           <el-option label="男" value="1" />
           <el-option label="女" value="0" />
         </el-select>
       </el-form-item>
       <el-form-item label="职称">
-        <el-input v-model="form.jobTitle" />
+        <el-input v-model="form.jobTitle" disabled/>
       </el-form-item>
       <el-form-item label="科室">
-        <el-input v-model="form.deptName" />
+        <el-input v-model="form.deptName" disabled/>
       </el-form-item>
       <el-form-item label="出诊地址">
         <el-input v-model="form.visitAddress" />
       </el-form-item>
       <el-form-item label="学历">
-        <el-input v-model="form.education" />
+        <el-input v-model="form.education" disabled/>
       </el-form-item>
       <el-form-item label="简介">
         <el-input type="textarea" v-model="form.introduction" rows="3" />

@@ -61,7 +61,7 @@ const handleClose = (key: string, keyPath: string[]) => {
 }
 
 :deep(.el-sub-menu .el-sub-menu__title) {
-  color: #17dd4b !important; /* 子菜单标题颜色 */
+  color: #17dd4b !important; /* 子菜单主题颜色 */
 }
 
 :deep(.el-menu .el-menu-item) {

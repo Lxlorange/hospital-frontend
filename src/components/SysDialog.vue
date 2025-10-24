@@ -35,7 +35,7 @@ interface DialogProps {
  */
 
 const props = withDefaults(defineProps<DialogProps>(), {
-  title: "标题",
+  title: "主题",
   visible: false,
   width: 630,
   height: 280,
