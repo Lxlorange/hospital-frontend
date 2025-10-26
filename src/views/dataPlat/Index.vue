@@ -59,7 +59,7 @@
     <el-card v-if="strore.getType === '0'" class="box-card" style="margin-top: 30px">
       <template #header>
         <div class="card-header">
-          <span>今日排班</span>
+          <span>排班</span>
           <div class="schedule-buttons">
             <el-button type="primary" size="small" @click="addConsultation()" style="margin-right: 15px;background-color: powderblue;color: black;" v-show="showAddConsultationBtn">临时加号</el-button>
             <el-button type="primary" size="small" @click="getMySchedule('1')">本星期</el-button>
@@ -120,7 +120,7 @@ const getHomeTotal = async () => {
   }
 };
 
-//今日排班
+//排班
 const schedule = ref([]);
 const getMySchedule = async (type: string) => {
   let res = await getMyScheduleApi({
@@ -233,7 +233,7 @@ onMounted(() => {
 }
 
 
-/* “今日排班”卡片 - 玻璃拟态效果 */
+/* “排班”卡片 - 玻璃拟态效果 */
 .box-card {
   border-radius: 12px;
   border: none;

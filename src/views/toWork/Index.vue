@@ -58,10 +58,20 @@
             <template #date-cell="{ data }">
                 <div class="date-cell" @click="handleDateClick(data.day)">
                     <div class="solar-date">{{ data.day.split('-')[2] }}</div>
+                    
                     <div class="schedule-summary">
-                        <div v-for="item in getInstanceSummary(data.day)" :key="item.doctorId" class="schedule-item">
-                           <el-tag size="small" effect="plain">{{ item.doctorName }}</el-tag>
+                        <div 
+                            v-for="item in getInstanceSummary(data.day).doctors" 
+                            :key="item.doctorId" 
+                            class="schedule-item"
+                        >
+                          <el-tag size="small" effect="plain">{{ item.doctorName }}</el-tag>
                         </div>
+                    </div>
+                    
+                    <div class="status-dots">
+                        <span v-if="getInstanceSummary(data.day).hasNormal" class="status-dot normal"></span>
+                        <span v-if="getInstanceSummary(data.day).hasStopped" class="status-dot stopped"></span>
                     </div>
                 </div>
             </template>
@@ -95,22 +105,39 @@
       </template>
     </SysDialog>
 
-    <el-dialog v-model="templateState.slotDialogVisible" title="配置号源" width="500px" append-to-body>
+    <el-dialog v-model="templateState.slotDialogVisible" title="配置号源" width="600px" append-to-body>
         <el-form label-width="80px">
             <div v-for="(slot, index) in templateState.editingSlots" :key="index" style="display: flex; align-items: center; margin-bottom: 10px;">
-                <el-form-item label="号源类型" style="width: 150px; margin-right: 10px;">
-                    <el-input v-model="slot.slotType" placeholder="如:普通号" />
+                
+                <el-form-item label="号源类型" style="width: 180px; margin-right: 10px;">
+                    <el-select v-model="slot.slotType" placeholder="请选择号别">
+                        <el-option
+                            v-for="item in slotTypeOptions"
+                            :key="item.value"
+                            :label="item.label"
+                            :value="item.value"
+                            :disabled="isSlotTypeDisabled(item.value, slot.slotType)"
+                        />
+                    </el-select>
                 </el-form-item>
-                <el-form-item label="总号量" style="width: 120px; margin-right: 10px;">
+
+                <el-form-item label="总号量" style="width: 200px; margin-right: 10px;">
                     <el-input-number v-model="slot.totalAmount" :min="0" controls-position="right" />
                 </el-form-item>
-                 <el-form-item label="价格" style="width: 120px; margin-right: 10px;">
-                    <el-input-number v-model="slot.price" :min="0" :precision="2" controls-position="right" />
-                </el-form-item>
-                <el-button type="danger" :icon="Delete" circle @click="removeSlot(index)" />
+                <el-button type="danger" :icon="Delete"  @click="removeSlot(index)" style="margin-left: 20px; margin-bottom:20px; width: 32px; height: 32px;"/>
             </div>
         </el-form>
-        <el-button @click="addSlot" :icon="Plus" style="margin-top: 10px;">添加号源</el-button>
+        
+        
+        <el-button 
+            @click="addSlot" 
+            :icon="Plus" 
+            style="margin-top: 10px;" 
+            :disabled="templateState.editingSlots.length >= slotTypeOptions.length"
+        >
+            添加号源
+        </el-button>
+
         <template #footer>
             <el-button @click="templateState.slotDialogVisible = false">取消</el-button>
             <el-button type="primary" @click="confirmSlotEdit">确定</el-button>
@@ -171,12 +198,12 @@
 </template>
 
 <script setup lang="ts">
-import { ref, reactive, onMounted, watch } from 'vue';
+import { ref, reactive, onMounted, watch,computed } from 'vue';
 import { ElMessage, ElMessageBox } from 'element-plus';
 import { Edit, Plus, Delete, Promotion } from '@element-plus/icons-vue';
 import SysDialog from '@/components/SysDialog.vue';
 import { getSelectDeptApi, SelectType } from '@/api/department';
-import { getSelectUserApi } from '@/api/user'; // ✅ 从 @/api/user 导入
+import { getSelectUserApi } from '@/api/user'; // 从 @/api/user 导入
 import {
   ScheduleTemplate,
   TemplateSlot,
@@ -186,10 +213,10 @@ import {
   generateInstancesApi,
   getInstancesApi,
   updateInstanceStatusApi,
+  InstanceSlot
 } from '@/api/schedule';
 import dayjs from 'dayjs';
 
-// ==================== 通用状态和方法 ====================
 const activeTab = ref('template');
 const commonState = reactive({
   departments: [] as SelectType[],
@@ -205,7 +232,7 @@ const getDeptList = async () => {
 };
 // 获取医生列表
 const getDoctorList = async (deptId: string) => {
-  const res = await getSelectUserApi(deptId); // 假设 getSelectUserApi 也返回 ApiResponse<SelectType[]>
+  const res = await getSelectUserApi(deptId);
   if (res && res.code === 200) {
     commonState.doctors = res.data;
   }
@@ -217,7 +244,6 @@ onMounted(() => {
 });
 
 
-// ==================== 1. 模板管理逻辑 ====================
 const templateState = reactive({
   filter: {
     deptId: '',
@@ -233,7 +259,32 @@ const templateState = reactive({
   editingSlots: [] as TemplateSlot[],
   editingCoordinates: { day: 0, timeSlot: 0 },
 });
+/**
+ * @description 定义固定的号源类型选项
+ */
+const slotTypeOptions = [
+  { value: '普通号', label: '普通号' },
+  { value: '专家号', label: '专家号' },
+  { value: '特需号', label: '特需号' },
+  { value: '国际医疗', label: '国际医疗' }
+];
 
+/**
+ * @description 计算当前已使用的号源类型，用于禁用重复选项
+ */
+const usedSlotTypes = computed(() => {
+    return new Set(templateState.editingSlots.map(slot => slot.slotType));
+});
+
+/**
+ * @description 判断某个选项是否应该被禁用
+ * @param optionValue 当前遍历到的选项值，如 "普通号"
+ * @param currentSlotValue 当前下拉框绑定的值，如 "专家号"
+ */
+const isSlotTypeDisabled = (optionValue: string, currentSlotValue: string) => {
+    // 如果这个选项已经被使用了，并且它不是当前下拉框已经选中的那个值，就禁用它
+    return usedSlotTypes.value.has(optionValue) && optionValue !== currentSlotValue;
+}
 const handleDeptChange = (deptId: string) => {
   templateState.filter.doctorId = '';
   commonState.doctors = [];
@@ -259,15 +310,33 @@ const getTemplateSlots = (dayOfWeek: number, timeSlot: number) => {
   return template ? template.slots : [];
 };
 
+/**
+ * @description 打开号源编辑子弹窗
+ * @param day 星期几 (1-7)
+ * @param timeSlot 时间段 (1-2)
+ */
 const editTemplateSlot = (day: number, timeSlot: number) => {
     templateState.editingCoordinates = { day, timeSlot };
     const existingSlots = getTemplateSlots(day, timeSlot);
-    templateState.editingSlots = JSON.parse(JSON.stringify(existingSlots));
+
+    templateState.editingSlots.length = 0; 
+    JSON.parse(JSON.stringify(existingSlots)).forEach((slot: TemplateSlot) => {
+        templateState.editingSlots.push(slot);
+    });
+
     templateState.slotDialogVisible = true;
 }
 
 const addSlot = () => {
-    templateState.editingSlots.push({ slotType: '普通号', totalAmount: 10, price: 0 });
+    if (templateState.editingSlots.length >= slotTypeOptions.length) {
+        ElMessage.warning('已添加所有可用的号源类型');
+        return;
+    }
+    const defaultType = slotTypeOptions.find(opt => !usedSlotTypes.value.has(opt.value))?.value || '';
+    templateState.editingSlots.push({ 
+        slotType: defaultType,
+        totalAmount: 10,
+    });
 }
 
 const removeSlot = (index: number) => {
@@ -281,22 +350,22 @@ const confirmSlotEdit = () => {
     let template = templateState.templates.find(
         t => t.dayOfWeek === day && t.timeSlot === timeSlot
     );
+    const newSlots = JSON.parse(JSON.stringify(templateState.editingSlots));
 
     if (template) {
-        if(templateState.editingSlots.length > 0){
-             template.slots = templateState.editingSlots;
-        } else {
+        if(newSlots.length > 0) {
+            template.slots = newSlots;
+        } else { 
             templateState.templates = templateState.templates.filter(t => t !== template);
         }
-    } else if (templateState.editingSlots.length > 0) {
+    } else if (newSlots.length > 0) {
         templateState.templates.push({
             doctorId,
             dayOfWeek: day,
             timeSlot: timeSlot,
-            slots: templateState.editingSlots,
+            slots: newSlots,
         });
     }
-    
     templateState.slotDialogVisible = false;
 }
 
@@ -314,7 +383,6 @@ const closeTemplateDialog = () => {
   templateState.templates = [];
 };
 
-// ==================== 2. 日历视图逻辑 ====================
 const calendarRef = ref();
 const instanceState = reactive({
     calendarDate: new Date(),
@@ -330,10 +398,29 @@ const selectDate = (val: 'prev-month' | 'next-month' | 'today') => {
   }
 };
 
+/**
+ * @description 获取某天的排班概要（用于在日历格子上显示）
+ * @param date 日期字符串 "YYYY-MM-DD"
+ * @returns 返回一个包含医生列表和状态汇总的对象
+ */
 const getInstanceSummary = (date: string) => {
     const dailyInstances = instanceState.instances.filter(i => i.scheduleDate === date);
+    
+    if (dailyInstances.length === 0) {
+        return { doctors: [], hasNormal: false, hasStopped: false };
+    }
+
     const doctors = dailyInstances.map(i => ({ doctorId: i.doctorId, doctorName: i.doctorName }));
-    return [...new Map(doctors.map(item => [item['doctorId'], item])).values()];
+    const uniqueDoctors = [...new Map(doctors.map(item => [item['doctorId'], item])).values()];
+    
+    const hasNormal = dailyInstances.some(i => i.status === 1);
+    const hasStopped = dailyInstances.some(i => i.status === 2);
+
+    return {
+        doctors: uniqueDoctors,
+        hasNormal,
+        hasStopped
+    };
 }
 
 const handleDateClick = (date: string) => {
@@ -353,11 +440,44 @@ const getCalendarRange = () => {
     return { startDate, endDate };
 }
 
+const transformApiData = (apiData: any[]): ScheduleInstance[] => {
+    const instanceMap = new Map<string, ScheduleInstance>();
+
+    for (const item of apiData) {
+        const key = `${item.doctorId}-${item.times}-${item.timeSlot}`;
+
+        const newSlot: InstanceSlot = {
+            instanceSlotId: item.scheduleId,
+            slotType: item.levelName,
+            totalAmount: item.amount,
+            availableAmount: item.lastAmount
+        };
+
+        if (!instanceMap.has(key)) {
+            instanceMap.set(key, {
+                instanceId: key,
+                doctorId: item.doctorId,
+                doctorName: item.doctorName,
+                departmentName: item.deptName,
+                scheduleDate: item.times,
+                timeSlot: item.timeSlot,
+                status: Number(item.type),
+                slots: [newSlot]
+            });
+        } else {
+            instanceMap.get(key)!.slots.push(newSlot);
+        }
+    }
+
+    return Array.from(instanceMap.values());
+};
+
 const fetchCurrentMonthInstances = async () => {
     const { startDate, endDate } = getCalendarRange();
     const res = await getInstancesApi({ startDate, endDate });
     if (res && res.code === 200) {
-        instanceState.instances = res.data;
+        const transformedData = transformApiData(res.data);
+        instanceState.instances = transformedData;
     }
 }
 
@@ -440,4 +560,78 @@ const updateStatus = async (instanceId: string, status: number) => {
     height: 100px;
 }
 
+:deep(.el-calendar-table .el-calendar-day) {
+    height: 110px; // 增加格子高度以容纳更多信息
+    padding: 0;
+}
+
+/* 非本月日期置灰，降低视觉干扰 */
+:deep(.el-calendar-table .next),
+:deep(.el-calendar-table .prev) {
+    .date-cell {
+        opacity: 0.5;
+    }
+}
+.date-cell {
+    width: 100%;
+    height: 100%;
+    padding: 8px;
+    box-sizing: border-box;
+    display: flex;
+    flex-direction: column;
+    cursor: pointer;
+    position: relative; /* 为状态点的绝对定位提供容器 */
+    transition: background-color 0.2s; /* 增加Hover过渡效果 */
+}
+
+/* 增加鼠标悬浮效果 */
+.date-cell:hover {
+    background-color: #f5f7fa;
+}
+
+.solar-date {
+    font-size: 14px;
+    text-align: center;
+    font-weight: 500;
+}
+
+.schedule-summary {
+    flex: 1;
+    overflow-y: auto;
+    font-size: 12px;
+    margin-top: 5px;
+}
+
+.schedule-item {
+    margin-bottom: 3px;
+    .el-tag {
+      width: 100%;
+      text-align: center;
+      display: block; /* 确保 el-tag 占满一行 */
+    }
+}
+
+/* --- ✅ 状态点样式 --- */
+.status-dots {
+    position: absolute;
+    bottom: 5px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    gap: 5px;
+}
+
+.status-dot {
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+}
+
+.status-dot.normal {
+    background-color: #67c23a; /* 绿色 - 正常 */
+}
+
+.status-dot.stopped {
+    background-color: #f56c6c; /* 红色 - 停诊 */
+}
 </style>

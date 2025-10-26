@@ -6,6 +6,7 @@
           <el-input
             placeholder="输入姓名"
             v-model="searchParm.nickName"
+            @input="searchParm.nickName = searchParm.nickName.replace(/\d/g, '')"
             class="search-input"
             clearable
           ></el-input>
@@ -14,6 +15,7 @@
           <el-input
             placeholder="输入电话"
             v-model="searchParm.phone"
+            @input="searchParm.phone = searchParm.phone.replace(/\D/g, '').substring(0, 11)"
             class="search-input"
             clearable
           ></el-input>
@@ -259,7 +261,7 @@
           <el-row>
             <el-col :span="12" :offset="0">
               <el-form-item prop="price" label="挂号费：">
-                <el-input type="number" v-model="addModel.price"></el-input>
+                <el-input type="number" v-model.number="addModel.price"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
@@ -307,7 +309,6 @@
 </template>
 
 <script setup lang="ts">
-// ---------- Script 部分完全没有改动，保持原样 ----------
 import { computed, nextTick, onMounted, reactive, ref } from "vue";
 import SysDialog from "@/components/SysDialog.vue";
 import useDialog from "@/hooks/useDialog";
@@ -328,6 +329,7 @@ import {
 } from "@/api/user/index";
 import { User } from "@/api/user/UserModel";
 import useInstance from "@/hooks/useInstance";
+
 const { global } = useInstance();
 const imgbase = computed(() => {
   return process.env.BASE_API_IMG;
@@ -376,107 +378,70 @@ const addModel = reactive({
   goodAt: "",
   price: "",
 });
+
+// ---------- 新增和修改的验证规则部分 ----------
+
+// 自定义手机号验证器
+const validatePhone = (rule: any, value: any, callback: any) => {
+  if (!value) {
+    return callback(new Error("请输入电话号码"));
+  }
+  const reg = /^1[3-9]\d{9}$/;
+  if (!reg.test(value)) {
+    callback(new Error("请输入有效的11位手机号码"));
+  } else {
+    callback();
+  }
+};
+
+// 自定义挂号费验证器
+const validatePrice = (rule: any, value: any, callback: any) => {
+  if (value === "" || value === undefined || value === null) {
+    return callback(new Error("请输入挂号费"));
+  }
+  if (typeof value !== 'number' || value <= 0) {
+    return callback(new Error("挂号费必须是大于0的数字"));
+  }
+  callback();
+};
+
 //表单验证规则
 const rules = reactive({
   nickName: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "输入姓名",
-    },
+    { required: true, message: "请输入姓名", trigger: "blur" },
+    { pattern: /^[\u4e00-\u9fa5a-zA-Z]{2,10}$/, message: '姓名必须是2-10个中英文字符', trigger: 'blur' }
   ],
-  sex: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "选择性别",
-    },
-  ],
-  education: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "输入学历",
-    },
-  ],
-  jobTitle: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "输入职称",
-    },
-  ],
-  phone: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "输入电话",
-    },
-  ],
-  price: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "输入挂号费",
-    },
-  ],
+  sex: [{ required: true, message: "请选择性别", trigger: "change" }],
+  education: [{ required: true, message: "请输入学历", trigger: "blur" }],
+  jobTitle: [{ required: true, message: "请输入职称", trigger: "blur" }],
+  phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
+  email: [{ type: 'email', message: '请输入有效的邮箱地址', trigger: ['blur', 'change'] }],
+  price: [{ required: true, validator: validatePrice, trigger: "blur" }],
   username: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "输入用户名",
-    },
+    { required: true, message: "请输入用户名", trigger: "blur" },
+    { pattern: /^[a-zA-Z0-9_-]{4,16}$/, message: '用户名必须是4-16位的字母、数字、下划线或减号', trigger: 'blur' }
   ],
   password: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "输入密码",
-    },
+    { required: true, message: "请输入密码", trigger: "blur" },
+    { pattern: /^(?=.*[A-Za-z])(?=.*\d)[A-Za-z\d]{6,18}$/, message: '密码必须是6-18位，且同时包含字母和数字', trigger: 'blur' }
   ],
-  roleId: [
-    {
-      required: true,
-      trigger: ["blur"],
-      message: "选择角色",
-    },
-  ],
-  deptId: [
-    {
-      required: true,
-      trigger: ["blur"],
-      message: "选择科室",
-    },
-  ],
-  image: [
-    {
-      required: true,
-      trigger: ["blur"],
-      message: "上传照片",
-    },
-  ],
+  roleId: [{ required: true, message: "请选择角色", trigger: "change" }],
+  deptId: [{ required: true, message: "请选择科室", trigger: "change" }],
+  image: [{ required: true, message: "请上传照片", trigger: "change" }],
   introduction: [
-    {
-      required: true,
-      trigger: ["blur"],
-      message: "填写医生简介",
-    },
+    { required: true, message: "请填写医生简介", trigger: "blur" },
+    { max: 200, message: '简介不能超过200个字符', trigger: 'blur' }
   ],
   goodAt: [
-    {
-      required: true,
-      trigger: ["blur"],
-      message: "填写医生专业的病症",
-    },
+    { required: true, message: "请填写医生擅长的病症", trigger: "blur" },
+    { max: 200, message: '专业描述不能超过200个字符', trigger: 'blur' }
   ],
   visitAddress: [
-    {
-      required: true,
-      trigger: ["blur"],
-      message: "填出诊室",
-    },
+    { required: true, message: "请填写出诊室", trigger: "blur" },
+    { max: 100, message: '出诊室信息不能超过100个字符', trigger: 'blur' }
   ],
 });
+
 
 //图片上传的ref属性
 const upImgRef = ref();
@@ -485,7 +450,7 @@ const fileList = ref<Array<UploadUserFile>>([]);
 //回显的图片
 const oldUrl = ref<Array<{ url: string }>>([]);
 //图片地址
-const imgUrl = ref<Array<{ url: string }>>([]);
+const imgUrl = ref<Array<{ url:string }>>([]);
 //子组件调用父组件的方法
 const getImg = (img: NewType) => {
   console.log("111111");
@@ -736,7 +701,6 @@ onMounted(() => {
 </script>
 
 <style scoped>
-/* ---------- 这是新增的 Style 部分 ---------- */
 .main-container {
   background-color: #f0f2f5;
   padding: 20px;
@@ -835,7 +799,6 @@ onMounted(() => {
   justify-content: flex-end;
 }
 
-/* 2. 为按钮包裹容器添加样式 */
 .operation-buttons {
   display: flex;
   justify-content: center;
