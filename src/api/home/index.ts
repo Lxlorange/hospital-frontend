@@ -11,7 +11,10 @@ export const getIndexNoticeApi = () => {
 export const getMyScheduleApi = (parm:any) => {
     return http.get("/api/home/getMySchedule",parm)
 }
-//添加号源
-export const addConsultationApi = (parm: any) => {
-    return http.get("/api/home/addConsultation",parm);
+//加号过程
+export const addConsultationApi = (doctorId: string, visitUserId: string) => {
+    return http.post("/api/addSlotRequest/submit",{
+        doctorId,
+        visitUserId
+    });
 }

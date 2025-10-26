@@ -136,13 +136,13 @@ const getMySchedule = async (type: string) => {
 const showAddConsultationBtn = ref<boolean>(false);
 const addConsultation = async () => {
   const doctorId = strore.getUserId;
-  ElMessageBox.confirm("确认申请加号？", "加号", {
+  ElMessageBox.prompt("输入挂号患者", "加号", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
     type: "warning"
-  }).then(async () => {
-      await addConsultationApi(doctorId);
-      ElMessage.success("已申请");
+  }).then(async ({ value }) => {
+      await addConsultationApi(doctorId,value);
+      ElMessage.success("已完成挂号");
   }).catch(() => {});
 };
 

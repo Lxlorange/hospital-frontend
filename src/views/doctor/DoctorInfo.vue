@@ -16,6 +16,7 @@
         </div>
         <div class="doctor-edit">
           <el-button type="primary" size="small" @click="editDoctorInfo">编辑资料</el-button>
+          <el-button type="primary" size="small" @click="requestLeave">申请请假</el-button>
         </div>
       </div>
     </el-card>
@@ -59,7 +60,12 @@
       :doctor="doctor"
       @updated="refreshDoctorInfo"
     />
-
+    
+    <LeaveRequestDialog
+      v-model="leaveVisible"
+      :leave="leave"
+      @updated="refreshDoctorInfo"
+    />
   </div>
 </template>
 
@@ -69,10 +75,15 @@ import { ElMessage } from "element-plus";
 import { getDoctorInfoApi } from "@/api/doctor";
 import EditDoctorDialog from "@/components/EditDoctorDialog.vue";
 import { userSotre } from "@/store/user/index";
+import LeaveRequestDialog from "@/components/LeaveRequestDialog.vue";
+
 const store = userSotre();
 
 const editVisible = ref<boolean>(false);
+const leaveVisible = ref<boolean>(false);
+
 const doctor = ref<any>({});
+const leave = ref<any>({});
 
 const parseGoodAt = (str: string) => {
   if (!str) return [];
@@ -81,6 +92,10 @@ const parseGoodAt = (str: string) => {
 
 const editDoctorInfo = () => {
   editVisible.value = true;
+}
+
+const requestLeave = () => {
+  leaveVisible.value = true;
 }
 
 const refreshDoctorInfo = async () => {
