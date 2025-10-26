@@ -213,6 +213,7 @@ import {
   generateInstancesApi,
   getInstancesApi,
   updateInstanceStatusApi,
+  InstanceSlot
 } from '@/api/schedule';
 import dayjs from 'dayjs';
 
@@ -439,11 +440,44 @@ const getCalendarRange = () => {
     return { startDate, endDate };
 }
 
+const transformApiData = (apiData: any[]): ScheduleInstance[] => {
+    const instanceMap = new Map<string, ScheduleInstance>();
+
+    for (const item of apiData) {
+        const key = `${item.doctorId}-${item.times}-${item.timeSlot}`;
+
+        const newSlot: InstanceSlot = {
+            instanceSlotId: item.scheduleId,
+            slotType: item.levelName,
+            totalAmount: item.amount,
+            availableAmount: item.lastAmount
+        };
+
+        if (!instanceMap.has(key)) {
+            instanceMap.set(key, {
+                instanceId: key,
+                doctorId: item.doctorId,
+                doctorName: item.doctorName,
+                departmentName: item.deptName,
+                scheduleDate: item.times,
+                timeSlot: item.timeSlot,
+                status: Number(item.type),
+                slots: [newSlot]
+            });
+        } else {
+            instanceMap.get(key)!.slots.push(newSlot);
+        }
+    }
+
+    return Array.from(instanceMap.values());
+};
+
 const fetchCurrentMonthInstances = async () => {
     const { startDate, endDate } = getCalendarRange();
     const res = await getInstancesApi({ startDate, endDate });
     if (res && res.code === 200) {
-        instanceState.instances = res.data;
+        const transformedData = transformApiData(res.data);
+        instanceState.instances = transformedData;
     }
 }
 
