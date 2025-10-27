@@ -12,9 +12,31 @@ export const getMyScheduleApi = (parm:any) => {
     return http.get("/api/home/getMySchedule",parm)
 }
 //加号过程
-export const addConsultationApi = (doctorId: string, visitUserId: string) => {
+export const addConsultationApi = (scheduleId: string, visitUserId: string,
+    userId: string, reason: string | null
+) => {
     return http.post("/api/addSlotRequest/submit",{
-        doctorId,
-        visitUserId
+        scheduleId,
+        userId,
+        visitUserId,
+        reason
     });
+}
+
+export const getPatientsApi = (name: string) => {
+    return http.get("/api/addSlotRequest/patientOptions",
+        {
+            name
+        }
+    )
+}
+
+export const getScheduleIdApi = (date: string, time: string, doctorId: string) => {
+    return http.get("/api/home/getScheduleId",
+        {
+            date,
+            time,
+            doctorId
+        }
+    );
 }

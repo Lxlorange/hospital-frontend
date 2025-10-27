@@ -84,11 +84,18 @@
       </el-table>
     </el-card>
   </el-main>
+  <AddConsultation 
+    v-model="addVisible"
+    :consultation="consultation"
+    @update="refreshDataPlat"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, reactive } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
+import AddConsultation from "@/components/AddConsultation.vue";
+
 // 导入 Element Plus 图标
 import {
   UserFilled,
@@ -132,18 +139,17 @@ const getMySchedule = async (type: string) => {
   }
 };
 
+const addVisible = ref<boolean>(false);
+const consultation = ref<any>({});
+const refreshDataPlat = () => {
+
+}
+
 //添加号源
 const showAddConsultationBtn = ref<boolean>(false);
 const addConsultation = async () => {
   const doctorId = strore.getUserId;
-  ElMessageBox.prompt("输入挂号患者", "加号", {
-    confirmButtonText: "确定",
-    cancelButtonText: "取消",
-    type: "warning"
-  }).then(async ({ value }) => {
-      await addConsultationApi(doctorId,value);
-      ElMessage.success("已完成挂号");
-  }).catch(() => {});
+  addVisible.value = true;
 };
 
 onMounted(() => {  
