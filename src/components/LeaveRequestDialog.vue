@@ -7,24 +7,28 @@
   >
     <el-form :model="form" label-width="100px" style="margin-top: 10px;">
       
-        <el-form-item label="请假开始日期">
+      <el-form-item label="开始日期">
         <el-date-picker
             v-model="form.startDate"
             type="date"
             placeholder="选择日期">
         </el-date-picker>
       </el-form-item>
-      <el-form-item label="请假开始时间段">
+      <el-form-item label="开始时间段">
         <el-select v-model="form.startTime" placeholder="选择时间段">
           <el-option label="上午" value="0" />
           <el-option label="下午" value="1" />
         </el-select>
       </el-form-item>
 
-      <el-form-item label="请假结束日期">
-        <el-input v-model="form.endDate" />
+      <el-form-item label="结束日期">
+        <el-date-picker
+            v-model="form.startDate"
+            type="date"
+            placeholder="选择日期">
+        </el-date-picker>
       </el-form-item>
-      <el-form-item label="请假结束时间段">
+      <el-form-item label="结束时间段">
         <el-select v-model="form.endTime" placeholder="选择时间段">
           <el-option label="上午" value="0" />
           <el-option label="下午" value="1" />
@@ -48,7 +52,6 @@
 <script lang="ts" setup>
 import { onMounted, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
-import { updateDoctorInfoApi } from "@/api/doctor";
 import { LeaveType } from "@/api/leave/LeaveModel";
 import { requestLeave } from "@/api/leave";
 
