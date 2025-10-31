@@ -15,12 +15,14 @@ export const getMyScheduleApi = (parm:any) => {
 export const addConsultationApi = (scheduleId: string, visitUserId: string,
     userId: string, reason: string | null
 ) => {
-    return http.post("/api/addSlotRequest/submit",{
-        scheduleId,
-        userId,
-        visitUserId,
+    const parm = {
+        scheduleId: Number(scheduleId),
+        userId: Number(userId),
+        visitUserId: Number(visitUserId),
         reason
-    });
+    }
+    console.log(parm)
+    return http.post("/api/addSlotRequest/submit",parm);
 }
 
 export const getPatientsApi = (name: string) => {
@@ -32,11 +34,11 @@ export const getPatientsApi = (name: string) => {
 }
 
 export const getScheduleIdApi = (date: string, time: string, doctorId: string) => {
-    return http.get("/api/home/getScheduleId",
-        {
-            date,
-            time,
-            doctorId
-        }
-    );
+    const parm = {
+        date,
+        timeSlot: time,
+        doctorId:String(doctorId)
+    }
+    console.log(parm)
+    return http.get("/api/home/getScheduleId",parm);
 }

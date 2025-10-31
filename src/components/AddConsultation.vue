@@ -11,7 +11,8 @@
         <el-date-picker
             v-model="form.date"
             type="date"
-            placeholder="选择日期">
+            placeholder="选择日期"
+            value-format="YYYY-MM-DD">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="加号时间段">
@@ -98,8 +99,10 @@ const close = () => {
 const submit = async () => {
   try {
     const consultation: ConsultationType = {...form.value};
+    console.log("consultation:")
+    console.log(consultation)
     const scheduleId = (await getScheduleIdApi(consultation.date,consultation.time,store.getUserId)).data;
-    await addConsultationApi(scheduleId, consultation.visitUserId, consultation.userId, consultation.reason);
+    await addConsultationApi(scheduleId, consultation.user.visitUserId, consultation.user.userId, consultation.reason);
     emits("updated");
     close();
   } catch (err) {
