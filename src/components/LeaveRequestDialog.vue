@@ -11,7 +11,9 @@
         <el-date-picker
             v-model="form.startDate"
             type="date"
-            placeholder="选择日期">
+            placeholder="选择日期"
+            value-format="YYYY-M-D"
+        >
         </el-date-picker>
       </el-form-item>
       <el-form-item label="开始时间段">
@@ -23,9 +25,10 @@
 
       <el-form-item label="结束日期">
         <el-date-picker
-            v-model="form.startDate"
+            v-model="form.endDate"
             type="date"
-            placeholder="选择日期">
+            placeholder="选择日期"
+            value-format="YYYY-M-D">
         </el-date-picker>
       </el-form-item>
       <el-form-item label="结束时间段">
@@ -57,7 +60,8 @@ import { requestLeave } from "@/api/leave";
 
 const props = defineProps<{
   modelValue: boolean;
-  leave: LeaveType
+  leave: LeaveType,
+  doctor: any
 }>();
 
 const emits = defineEmits(["update:modelValue", "updated"]);
@@ -87,7 +91,9 @@ const close = () => {
 
 const submit = async () => {
   try {
-    const leave: LeaveType = {...form.value};
+    const doctorId = String(props.doctor.doctorId);
+    const nickName = props.doctor.nickName;
+    const leave: LeaveType = {...form.value, doctorId, nickName};
     await requestLeave(leave);
     emits("updated");
     close();

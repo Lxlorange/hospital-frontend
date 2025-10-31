@@ -64,6 +64,7 @@
     <LeaveRequestDialog
       v-model="leaveVisible"
       :leave="leave"
+      :doctor="DoctorInfoForLeave"
       @updated="refreshDoctorInfo"
     />
   </div>
@@ -84,7 +85,10 @@ const leaveVisible = ref<boolean>(false);
 
 const doctor = ref<any>({});
 const leave = ref<any>({});
-
+const DoctorInfoForLeave = {
+  doctorId : store.getUserId,
+  nickName : store.getNickName
+}
 const parseGoodAt = (str: string) => {
   if (!str) return [];
   return str.split(/[，,]/).map((s) => s.trim());

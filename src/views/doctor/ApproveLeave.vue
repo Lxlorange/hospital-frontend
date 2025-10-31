@@ -43,6 +43,21 @@
         </el-table-column>
       </el-table>
     </el-card>
+
+    <!-- 审核详情对话框 -->
+    <el-dialog v-model="detailVisible" title="修改详情" width="700px">
+      <el-descriptions title="信息对比" :column="2" border>
+        <el-descriptions-item
+          v-for="(val, key) in compareFields"
+          :key="key"
+          :label="fieldLabels[key]"
+        >
+          <div>
+            <span class="new">{{mapValues(val,key)}}</span>
+          </div>
+        </el-descriptions-item>
+      </el-descriptions>
+    </el-dialog>
   </div>
 </template>
 
@@ -110,15 +125,32 @@ const fieldLabels: Record<string, string> = {
   nickName: "医生姓名",
   startDate:"开始日期",
   endDate: "结束日期",
-  startTime:"开始时间",
-  endTime: "结束时间",
+  startTime:"开始时段",
+  endTime: "结束时段",
   status: "审核状态",
+  reason: "请假理由",
   reviewComment: "审核意见",
   reviewerId: "审核人编号",
   reviewTime: "审核时间",
   createTime: "申请时间",
   updateTime: "最后更新时间",
 };
+
+const mapValues = (val: any,key: any) => {
+  if(val == null || val == ''){
+    return "无"
+  }
+  if(key == "startTime" || key == "endTime"){
+    if(val == "0"){
+      return "上午"
+    }else if(val == "1"){
+      return "下午"
+    }
+  }else{
+    return val;
+  }
+  
+}
 
 const reject = (row: any) => {
   ElMessageBox.prompt("请输入驳回原因", "驳回修改", {
