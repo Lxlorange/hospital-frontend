@@ -50,9 +50,9 @@
             <template #header="{ date }">
                 <span>{{ date }}</span>
                 <el-button-group>
-                    <el-button size="small" @click="selectDate('prev-month')">上个月</el-button>
-                    <el-button size="small" @click="selectDate('today')">今天</el-button>
-                    <el-button size="small" @click="selectDate('next-month')">下个月</el-button>
+                    <el-button size="small" @click="selectDate('prev-month')">上月</el-button>
+                    <el-button size="small" @click="selectDate('today')">本月</el-button>
+                    <el-button size="small" @click="selectDate('next-month')">下月</el-button>
                 </el-button-group>
             </template>
             <template #date-cell="{ data }">
