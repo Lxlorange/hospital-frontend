@@ -81,6 +81,18 @@
         </el-table-column>
         <el-table-column prop="amount" label="放号"></el-table-column>
         <el-table-column prop="lastAmount" label="余号"></el-table-column>
+        <el-table-column label="请假">
+          <template #default="scope">
+            <el-button 
+              type="danger" 
+              size="small" 
+              @click="askForLeave(scope.row)"
+            >
+              请假
+            </el-button>
+          </template>
+        </el-table-column>
+
       </el-table>
     </el-card>
   </el-main>
@@ -95,6 +107,7 @@
 import { ref, nextTick, onMounted, reactive } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import AddConsultation from "@/components/AddConsultation.vue";
+import { requestLeave } from "@/api/leave";
 
 // 导入 Element Plus 图标
 import {
@@ -151,6 +164,38 @@ const addConsultation = async () => {
   const doctorId = strore.getUserId;
   addVisible.value = true;
 };
+
+const askForLeave = async (row: any) => {
+  let { value: reason } = await ElMessageBox.prompt(
+      `请输入请假理由（${row.times} ${row.week}）`,
+      '请假确认',
+      {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        inputPlaceholder: '身体不适 / 家中有事',
+        inputPattern: /^.{1,100}$/, // 限制输入1~100字
+        inputErrorMessage: '请假理由不能为空',
+        type: 'warning',
+      }
+  );
+  const doctorId = String(row.doctorId);
+  const scheduleId = Number(row.scheduleId);
+  reason = String(reason);
+  const parm = {
+    doctorId,
+    scheduleId,
+    reason
+  }
+  console.log(parm)
+  const res = await requestLeave({
+    doctorId,
+    scheduleId, 
+    reason
+  });
+  if(res.data.code == 200) {
+    ElMessage.success("申请成功")
+  }
+}
 
 onMounted(() => {  
   const userType:string = strore.getType;

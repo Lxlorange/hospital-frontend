@@ -102,9 +102,6 @@ const submit = async () => {
     const startSchedule = (await getScheduleIdApi(startDate,startTime,doctorId)).data;
     const endSchedule = (await getScheduleIdApi(endDate,endTime,doctorId)).data;
     
-    console.log(startSchedule);
-    console.log(endSchedule)
-    
     const leave: LeaveType = {...form.value, doctorId, nickName,startScheduleId: startSchedule,endScheduleId: endSchedule};
     await requestLeave(leave);
     emits("updated");
