@@ -101,7 +101,7 @@ const submit = async () => {
     const consultation: ConsultationType = {...form.value};
     console.log("consultation:")
     console.log(consultation)
-    const scheduleId = (await getScheduleIdApi(consultation.date,consultation.time,store.getUserId)).data;
+    const scheduleId = (await getScheduleIdApi(consultation.date,consultation.time,store.getUserId)).data.data;
     await addConsultationApi(scheduleId, consultation.user.visitUserId, consultation.user.userId, consultation.reason);
     emits("updated");
     close();

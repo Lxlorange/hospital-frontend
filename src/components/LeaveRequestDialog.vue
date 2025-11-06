@@ -57,6 +57,7 @@ import { onMounted, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { LeaveType } from "@/api/leave/LeaveModel";
 import { requestLeave } from "@/api/leave";
+import { getScheduleIdApi } from "@/api/home";
 
 const props = defineProps<{
   modelValue: boolean;
@@ -93,11 +94,23 @@ const submit = async () => {
   try {
     const doctorId = String(props.doctor.doctorId);
     const nickName = props.doctor.nickName;
-    const leave: LeaveType = {...form.value, doctorId, nickName};
+    const startDate = form.value.startDate;
+    const endDate = form.value.endDate;
+    const startTime = form.value.startTime;
+    const endTime = form.value.endTime;
+    
+    const startSchedule = (await getScheduleIdApi(startDate,startTime,doctorId)).data;
+    const endSchedule = (await getScheduleIdApi(endDate,endTime,doctorId)).data;
+    
+    console.log(startSchedule);
+    console.log(endSchedule)
+    
+    const leave: LeaveType = {...form.value, doctorId, nickName,startScheduleId: startSchedule,endScheduleId: endSchedule};
     await requestLeave(leave);
     emits("updated");
     close();
   } catch (err) {
+    console.log("获取失败")
     ElMessage.error("更新失败");
   }
 };
