@@ -192,12 +192,26 @@
           <el-row>
             <el-col :span="12" :offset="0">
               <el-form-item prop="education" label="学历：">
-                <el-input v-model="addModel.education"></el-input>
+                <el-select v-model="addModel.education" placeholder="请选择学历" style="width: 100%;">
+                  <el-option
+                    v-for="item in educationOptions"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
               <el-form-item prop="jobTitle" label="职称：">
-                <el-input v-model="addModel.jobTitle"></el-input>
+                <el-select v-model="addModel.jobTitle" placeholder="请选择职称" style="width: 100%;">
+                  <el-option
+                    v-for="item in jobTitleOptions"
+                    :key="item"
+                    :label="item"
+                    :value="item"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
           </el-row>
@@ -261,7 +275,14 @@
           <el-row>
             <el-col :span="12" :offset="0">
               <el-form-item prop="price" label="挂号费：">
-                <el-input type="number" v-model.number="addModel.price"></el-input>
+                 <el-select v-model="addModel.price" placeholder="请选择挂号费" style="width: 100%;">
+                  <el-option
+                    v-for="item in priceOptions"
+                    :key="item.value"
+                    :label="item.label"
+                    :value="item.value"
+                  />
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" :offset="0">
@@ -381,6 +402,16 @@ const addModel = reactive({
 
 // ---------- 新增和修改的验证规则部分 ----------
 
+// ======================= 新增选择框选项数据 =======================
+const educationOptions = ref(['本科', '硕士', '博士', '博士后']);
+const jobTitleOptions = ref(['医师', '副主任医师', '主任医师']);
+const priceOptions = ref([
+  { label: '50元', value: 50 },
+  { label: '100元', value: 100 },
+  { label: '500元', value: 500 },
+]);
+// ================================================================
+
 // 自定义手机号验证器
 const validatePhone = (rule: any, value: any, callback: any) => {
   if (!value) {
@@ -394,17 +425,6 @@ const validatePhone = (rule: any, value: any, callback: any) => {
   }
 };
 
-// 自定义挂号费验证器
-const validatePrice = (rule: any, value: any, callback: any) => {
-  if (value === "" || value === undefined || value === null) {
-    return callback(new Error("请输入挂号费"));
-  }
-  if (typeof value !== 'number' || value <= 0) {
-    return callback(new Error("挂号费必须是大于0的数字"));
-  }
-  callback();
-};
-
 //表单验证规则
 const rules = reactive({
   nickName: [
@@ -412,11 +432,13 @@ const rules = reactive({
     { pattern: /^[\u4e00-\u9fa5a-zA-Z]{2,10}$/, message: '姓名必须是2-10个中英文字符', trigger: 'blur' }
   ],
   sex: [{ required: true, message: "请选择性别", trigger: "change" }],
-  education: [{ required: true, message: "请输入学历", trigger: "blur" }],
-  jobTitle: [{ required: true, message: "请输入职称", trigger: "blur" }],
+  // ======================= 修改验证规则 =======================
+  education: [{ required: true, message: "请选择学历", trigger: "change" }],
+  jobTitle: [{ required: true, message: "请选择职称", trigger: "change" }],
+  price: [{ required: true, message: "请选择挂号费", trigger: "change" }],
+  // ===========================================================
   phone: [{ required: true, validator: validatePhone, trigger: "blur" }],
   email: [{ type: 'email', message: '请输入有效的邮箱地址', trigger: ['blur', 'change'] }],
-  price: [{ required: true, validator: validatePrice, trigger: "blur" }],
   username: [
     { required: true, message: "请输入用户名", trigger: "blur" },
     { pattern: /^[a-zA-Z0-9_-]{4,16}$/, message: '用户名必须是4-16位的字母、数字、下划线或减号', trigger: 'blur' }
