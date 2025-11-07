@@ -5,5 +5,7 @@ export type LeaveType = {
     endDate: string,
     startTime: string,
     endTime: string,
+    startScheduleId: string,
+    endScheduleId: string,
     reason: string | null | undefined
 }
