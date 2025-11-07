@@ -81,8 +81,15 @@
         </el-table-column>
         <el-table-column prop="amount" label="放号"></el-table-column>
         <el-table-column prop="lastAmount" label="余号"></el-table-column>
-        <el-table-column label="请假">
+        <el-table-column label="操作">
           <template #default="scope">
+            <el-button 
+              type="danger" 
+              size="small" 
+              @click="addConsultationBySchedule(scope.row)"
+            >
+              加号
+            </el-button>
             <el-button 
               type="danger" 
               size="small" 
@@ -101,12 +108,19 @@
     :consultation="consultation"
     @update="refreshDataPlat"
   />
+  <AddConsultationBySchedule
+    v-model="addVisible2"
+    :consultation="consultation"
+    :scheduleId="currentScheduleId"
+    @update="refreshDataPlat"
+  />
 </template>
 
 <script setup lang="ts">
 import { ref, nextTick, onMounted, reactive } from "vue";
 import { ElMessageBox, ElMessage } from "element-plus";
 import AddConsultation from "@/components/AddConsultation.vue";
+import AddConsultationBySchedule from "@/components/AddConsultationBySchedule.vue";
 import { requestLeave } from "@/api/leave";
 
 // 导入 Element Plus 图标
@@ -126,6 +140,9 @@ import { userSotre } from "@/store/user/index";
 const mianHeight = ref(0);
 
 const strore = userSotre();
+
+const currentScheduleId = ref<number>(0);
+
 //统计
 const total = reactive({
   departmentCount: 0,
@@ -140,6 +157,11 @@ const getHomeTotal = async () => {
   }
 };
 
+const addConsultationBySchedule = async (row: any) => {
+  currentScheduleId.value = row.scheduleId;
+  addVisible2.value = true;
+}
+
 //排班
 const schedule = ref([]);
 const getMySchedule = async (type: string) => {
@@ -153,6 +175,8 @@ const getMySchedule = async (type: string) => {
 };
 
 const addVisible = ref<boolean>(false);
+const addVisible2 = ref<boolean>(false);
+
 const consultation = ref<any>({});
 const refreshDataPlat = () => {
 

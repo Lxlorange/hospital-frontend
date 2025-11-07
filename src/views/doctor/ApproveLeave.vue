@@ -9,7 +9,7 @@
       </template>
 
       <el-table :data="requests" stripe style="width: 100%">
-        <el-table-column prop="nickName" label="医生姓名" width="150" />
+        <el-table-column prop="scheduleId" label="排班号" width="150" />
         <el-table-column prop="createTime" label="时间" width="150" >
           <template #default="{ row }">
             {{ row.createTime ? row.createTime.split('T')[0] : '' }}
@@ -134,6 +134,7 @@ const fieldLabels: Record<string, string> = {
   reviewTime: "审核时间",
   createTime: "申请时间",
   updateTime: "最后更新时间",
+  scheduleId: "排班Id"
 };
 
 const mapValues = (val: any,key: any) => {

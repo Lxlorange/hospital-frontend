@@ -122,6 +122,7 @@ const viewDetail = (row: any) => {
   const copy = { ...row };
   if (copy.frontPhoto) copy.frontPhoto = baseURL + copy.frontPhoto;
   if (copy.backPhoto) copy.backPhoto = baseURL + copy.backPhoto;
+  console.log(copy)
   compareFields.value = copy;
   detailVisible.value = true;
 };
