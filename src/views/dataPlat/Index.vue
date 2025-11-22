@@ -210,7 +210,6 @@ const askForLeave = async (row: any) => {
     scheduleId,
     reason
   }
-  console.log(parm)
   const res = await requestLeave({
     doctorId,
     scheduleId, 
@@ -226,7 +225,6 @@ onMounted(() => {
   if(userType == "0"){
     showAddConsultationBtn.value = true;
   }
-  console.log(showAddConsultationBtn.value)
   mianHeight.value = window.innerHeight - 100;
   getHomeTotal();
   getMySchedule("1");
@@ -234,6 +232,7 @@ onMounted(() => {
     mianHeight.value = window.innerHeight - 100;
   });
 });
+
 </script>
 
 <style scoped lang="scss">

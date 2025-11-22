@@ -5,9 +5,9 @@ export const getIdentityRequestApi = async (param: any) => {
 }
 
 export const approveRequestApi = async (param: any) => {
-    return http.get("/api/auth/approve",param);
+    return http.post("/api/auth/approve",param);
 }
 
 export const rejectRequestApi = async ( param: any ) => {
-    return http.post("/api/auth/approve",param)
+    return http.post("/api/auth/reject",param)
 }

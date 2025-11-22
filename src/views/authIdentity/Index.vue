@@ -110,7 +110,7 @@ const isImageField = (key: number, val: string) => {
   if (!val) return false;
   const lowerVal = String(val).toLowerCase();
 
-  // 只要 key 里带 photo / image，或者 value 看起来像图片路径
+  // 只要 key 里带 photo / image
   return (
     lowerVal.endsWith(".jpg") ||
     lowerVal.endsWith(".jpeg") ||
@@ -131,16 +131,21 @@ const approve = (row: any) => {
   ElMessageBox.prompt("请输入审核意见：", "批准修改", {
     confirmButtonText: "确定",
     cancelButtonText: "取消",
-    inputPlaceholder: "例如：信息有效，予以通过",
-    type: "warning"
+    inputPlaceholder: "请输入审核意见",
+    inputValidator: (value) => {
+      if(!value || value.trim() === "") {
+        return "审核意见不能为空";
+      }
+      return true;
+    },
+    type: "warning",
   })
     .then(async ({ value }) => {
-      const reviewComment = value || "信息有效，予以通过"; // 默认内容
       const requestId = row.requestId;
       
       await approveRequestApi({
         requestId,
-        reviewComment
+        reviewComment: value
       });
       ElMessage.success("已批准");
       fetchRequests();
@@ -183,7 +188,7 @@ const reject = (row: any) => {
       const requestId = row.requestId;
       await rejectRequestApi({
         requestId, 
-        value
+        reviewComment: value
       }); // 传入 reviewComment
       ElMessage.success("已驳回");
       fetchRequests();

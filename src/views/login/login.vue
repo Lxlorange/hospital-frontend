@@ -99,7 +99,6 @@ const commit = () => {
       let res = await loginApi(loginModel);
       if (res && res.code == 200) {
         //存储用户信息
-        console.log(res);
         store.setUserId(res.data.userId);
         store.setNickName(res.data.nickName);
         store.setToken(res.data.token);
