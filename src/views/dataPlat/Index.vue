@@ -134,27 +134,25 @@
       </el-col>
     </el-row>
     <el-row :gutter="20" class="chart-row">
-      <el-col :span="12">
+      <el-col :span="6">
         <el-card class="chart-card">
           <div class="chart-title">科室挂号分布</div>
           <div ref="deptBarRef" class="chart" />
         </el-card>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="6">
         <el-card class="chart-card">
           <div class="chart-title">医生挂号Top10</div>
           <div ref="doctorBarRef" class="chart" />
         </el-card>
       </el-col>
-    </el-row>
-    <el-row :gutter="20" class="chart-row">
-      <el-col :span="12">
+      <el-col :span="6">
         <el-card class="chart-card">
           <div class="chart-title">时段分布</div>
           <div ref="timesAreaPieRef" class="chart" />
         </el-card>
       </el-col>
-      <el-col :span="12">
+      <el-col :span="6">
         <el-card class="chart-card">
           <div class="chart-title">预约状态分布</div>
           <div ref="statusPieRef" class="chart" />
@@ -315,36 +313,133 @@ const initDefaultRange = () => {
 const toLineOption = (title: string, data: DateCount[]) => {
   const x = data.map((i) => i.date);
   const y = data.map((i) => i.count);
+
+  // 定义渐变色，用于 areaStyle
+  const areaGradient = {
+    type: 'linear',
+    x: 0,
+    y: 0,
+    x2: 0,
+    y2: 1, // 渐变方向：从上到下
+    colorStops: [
+      {
+        offset: 0,
+        color: '#409EFF', // 0% 处的颜色（顶部）- 较深蓝色
+      },
+      {
+        offset: 1,
+        color: '#E6F7FF', // 100% 处的颜色（底部）- 极浅蓝色
+      },
+    ],
+    global: false,
+  };
+
+  const lineColor = '#409EFF';
+
   return {
     tooltip: { trigger: "axis" },
     grid: { left: 40, right: 20, bottom: 40, top: 40 },
     xAxis: { type: "category", data: x },
     yAxis: { type: "value" },
-    series: [{ type: "line", data: y, smooth: true, areaStyle: {} }],
+    series: [{ 
+      type: "line", 
+      data: y, 
+      smooth: true, 
+      areaStyle: { color: areaGradient }, 
+      itemStyle: { color: lineColor },
+      lineStyle: { width: 3, color: lineColor } 
+    }],
   };
 };
 
 const toBarOption = (data: NameCount[]) => {
   const x = data.map((i) => i.name);
   const y = data.map((i) => i.count);
+
+  // 柱子颜色使用从下到上的渐变
+  const barGradient = {
+    type: 'linear',
+    x: 0,
+    y: 0,
+    x2: 0,
+    y2: 1,
+    colorStops: [
+      { offset: 0, color: '#409EFF' }, // 顶部较深
+      { offset: 1, color: '#9CD9FF' } // 底部较浅
+    ],
+    global: false
+  };
+
   return {
     tooltip: { trigger: "axis" },
     grid: { left: 40, right: 20, bottom: 80, top: 40 },
-    xAxis: { type: "category", data: x, axisLabel: { interval: 0, rotate: 30 } },
-    yAxis: { type: "value" },
-    series: [{ type: "bar", data: y }],
+    xAxis: { 
+      type: "category", 
+      data: x, 
+      axisLabel: { 
+        interval: 0, 
+        rotate: 30,
+        color: '#333'
+      },
+      axisLine: { lineStyle: { color: '#ccc' } }
+    },
+    yAxis: { 
+      type: "value",
+      splitLine: { lineStyle: { type: 'dashed', color: '#eee' } }
+    },
+    series: [{ 
+      type: "bar", 
+      data: y,
+      itemStyle: {
+        color: barGradient,
+        borderRadius: [5, 5, 0, 0] // 顶部圆角
+      },
+      barWidth: '60%' 
+    }],
   };
 };
 
 const toPieOption = (data: NameCount[]) => {
+  const colors = [
+    '#409EFF',
+    '#26C6DA',
+    '#7E57C2',
+    '#66BB6A',
+    '#FFA726',
+    '#64B5F6',
+  ];
+
   return {
-    tooltip: { trigger: "item" },
-    legend: { top: "bottom" },
+    tooltip: { 
+      trigger: "item",
+      formatter: '{b}: {c} ({d}%)'
+    },
+    legend: { 
+      type: 'scroll',
+      orient: 'horizontal',
+      bottom: 0,
+      left: 'center',
+      textStyle: { color: '#333' }
+    },
+    color: colors,
     series: [
       {
         type: "pie",
-        radius: ["40%", "70%"],
+        radius: ["35%", "65%"],
+        center: ['50%', '45%'],
         avoidLabelOverlap: true,
+        label: {
+          show: false,
+          position: 'center',
+          formatter: '{b}\n{d}%',
+        },
+        emphasis: {
+          label: {
+            show: true,
+            fontSize: '16',
+            fontWeight: 'bold'
+          }
+        },
         data: data.map((i) => ({ name: i.name, value: i.count })),
       },
     ],
@@ -446,20 +541,21 @@ watch(dateRange, () => {});
   letter-spacing: 0.5px;
 }
 
-/* 顶部卡片 - 独立的渐变色 */
 .card-doctor {
-  background: linear-gradient(135deg, #26c6da 0%, #00acc1 100%); // 青色
-}
-.card-patient {
-  background: linear-gradient(135deg, #ff7043 0%, #f4511e 100%); // 橙色
-}
-.card-department {
-  background: linear-gradient(135deg, #7e57c2 0%, #5e35b1 100%); // 紫色
-}
-.card-visit {
-  background: linear-gradient(135deg, #66bb6a 0%, #43a047 100%); // 绿色
+  background: linear-gradient(135deg, #42c3f4 0%, #1ea9dd 100%);
 }
 
+.card-patient {
+  background: linear-gradient(135deg, #4fe3b9 0%, #2ecb9d 100%);
+}
+
+.card-department {
+  background: linear-gradient(135deg, #b08bff 0%, #8a63f0 100%);
+}
+
+.card-visit {
+  background: linear-gradient(135deg, #ffd66e 0%, #fbc344 100%);
+}
 
 /* “排班”卡片 - 玻璃拟态效果 */
 .box-card {
@@ -551,6 +647,6 @@ watch(dateRange, () => {});
 }
 .chart {
   width: 100%;
-  height: 360px;
+  height: 300px;
 }
 </style>
