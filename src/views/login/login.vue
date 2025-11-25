@@ -120,43 +120,78 @@ onMounted(() => {
   justify-content: center;
   align-items: center;
   min-height: 100vh;
-  background-color: #05f9f1;
+  background: linear-gradient(135deg, #d4f9ff, #b5f1f4);
   background-image: url("../../assets/login.png");
   background-size: cover;
   background-position: center;
+  background-repeat: no-repeat;
+  backdrop-filter: blur(2px);
 }
 
 .login-form {
   width: 400px;
   padding: 40px;
-  background-color: #16e8ef;
-  border-radius: 8px;
-  box-shadow: 0 4px 10px rgba(8, 236, 229, 0.89);
+
+  background: rgba(255, 255, 255, 0.6);
+  border-radius: 16px;
+
+  box-shadow: 0 8px 20px rgba(0, 172, 193, 0.15);
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  backdrop-filter: blur(12px);
   box-sizing: border-box;
 }
 
 .login-title {
   text-align: center;
   font-size: 28px;
-  font-weight: bold;
-  color: #333;
+  font-weight: 700;
+  color: #0a3d62;
   margin-bottom: 30px;
+  letter-spacing: 1px;
 }
 
 .code-input-group {
   display: flex;
   align-items: center;
+
+  input {
+    flex: 1;
+  }
 }
 
 .captcha-image {
   height: 40px;
   width: 120px;
-  margin-left: 10px;
+  margin-left: 12px;
   cursor: pointer;
-  border-radius: 4px;
+  border-radius: 6px;
+  box-shadow: 0 2px 6px rgba(0, 150, 160, 0.2);
+  transition: transform 0.2s ease;
+}
+
+.captcha-image:hover {
+  transform: scale(1.05);
 }
 
 .login-button {
   width: 100%;
+  margin-top: 10px;
+
+  background-color: #00bcd4 !important; 
+  border-color: #00acc1 !important;
+  color: #fff !important;
+  font-weight: 600;
+
+  transition: 0.2s ease;
+}
+
+.login-button:hover {
+  background-color: #00acc1 !important;
+  border-color: #0097a7 !important;
+}
+
+.el-input__inner:focus {
+  border-color: #00acc1 !important;
+  box-shadow: 0 0 4px rgba(0, 172, 193, 0.3);
 }
 </style>

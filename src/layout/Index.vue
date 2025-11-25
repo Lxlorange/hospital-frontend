@@ -47,7 +47,7 @@ nextTick(() => {
 .mycontainer {
   height: 100%;
   .leftmenu-default {
-    background-color: #90ee90; /* 修正：将背景色直接显示为绿色 */
+    background-color: #f5f7fa; /* 修正：将背景色直接显示为绿色 */
   }
   .leftmenu {
     background-color: #90ee90; /* 修正：将背景色直接显示为绿色 */
