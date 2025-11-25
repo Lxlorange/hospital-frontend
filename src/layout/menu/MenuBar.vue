@@ -56,32 +56,25 @@ const handleClose = (key: string, keyPath: string[]) => {
   min-height: 400px;
 }
 .el-menu {
-  border-right: none;
-  background-color: #90ee90; /* 显式显示菜单背景色 */
+  background-color: #f5f7fa;
 }
 
-:deep(.el-sub-menu .el-sub-menu__title) {
-  color: #17dd4b !important; /* 子菜单主题颜色 */
+:deep(.el-sub-menu__title) {
+  color: #4a4a4a !important;
 }
 
-:deep(.el-menu .el-menu-item) {
-  color: #12e031 !important; /* 菜单项默认颜色 */
+:deep(.el-menu-item) {
+  color: #555 !important;
 }
 
-/* 菜单点中文字的颜色 */
 :deep(.el-menu-item.is-active) {
-  color: #000 !important; /* 激活时字体颜色 */
-  background-color: #64dd17 !important; /* 调整选中项背景色 */
+  background-color: #4A90E2 !important;
+  color: #fff !important;
 }
 
-/* 当前打开菜单的所有子菜单颜色 */
-:deep(.is-opened .el-menu-item) {
-  background-color: #b9f6ca !important; /* 调整已打开子菜单的背景色 */
-}
-
-/* 鼠标移动菜单的颜色 */
-:deep(.el-menu-item:hover) {
-  background-color: #c8e6c9 !important; /* 调整鼠标悬停时的背景色 */
-  outline: 0;
+:deep(.el-menu-item:hover),
+:deep(.el-sub-menu__title:hover) {
+  background-color: #e8eef6 !important;
+  color: #4A90E2 !important;
 }
 </style>

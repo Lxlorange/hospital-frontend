@@ -1,6 +1,6 @@
 <template>
   <div class="review-page">
-    <el-card shadow="hover">
+    <el-card shadow="hover" class="full-card">
       <template #header>
         <div class="flex justify-between items-center">
           <span>医生资料修改审核</span>
@@ -9,13 +9,13 @@
       </template>
 
       <el-table :data="requests" stripe style="width: 100%">
-        <el-table-column prop="nickName" label="医生姓名" width="150" />
-        <el-table-column prop="createTime" label="时间" width="150" >
+        <el-table-column prop="nickName" label="医生姓名" width="250" />
+        <el-table-column prop="createTime" label="时间" width="250" >
           <template #default="{ row }">
             {{ row.createTime ? row.createTime.split('T')[0] : '' }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="status" label="状态" width="250">
           <template #default="{ row }">
             <el-tag
               :type="row.status === 'pending' ? 'warning' : row.status === 'approved' ? 'success' : 'danger'"
@@ -24,7 +24,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200">
+        <el-table-column label="操作" width="">
           <template #default="{ row }">
             <el-button size="small" @click="viewDetail(row)">查看</el-button>
             <el-button
@@ -53,7 +53,7 @@
           :label="fieldLabels[key]"
         >
           <div>
-            <span class="new">{{ val || '无' }}</span>
+            <span class="new">{{ mapValues(val,key) }}</span>
           </div>
         </el-descriptions-item>
       </el-descriptions>
@@ -135,6 +135,17 @@ const fieldLabels: Record<string, string> = {
   updateTime: "最后更新时间",
 };
 
+const mapValues = (val: any,key: any) => {
+  if(val == null || val == ''){
+    return "无"
+  }
+  if(key == "reviewTime" || key == "createTime" || key == "updateTime"){
+    return String(val).substring(0,10);
+  }else{
+    return val;
+  }
+}
+
 const reject = (row: any) => {
   ElMessageBox.prompt("请输入驳回原因", "驳回修改", {
     confirmButtonText: "确定",
@@ -173,5 +184,8 @@ onMounted(fetchRequests);
 .new {
   color: #409EFF;
   font-weight: bold;
+}
+.full-card :deep(.el-card__body) {
+  padding: 0 !important;
 }
 </style>

@@ -9,13 +9,13 @@
       </template>
 
       <el-table :data="requests" stripe style="width: 100%">
-        <el-table-column prop="scheduleId" label="排班号" width="150" />
-        <el-table-column prop="createTime" label="时间" width="150" >
+        <el-table-column prop="nickName" label="排班号" width="250" />
+        <el-table-column prop="createTime" label="时间" width="250" >
           <template #default="{ row }">
             {{ row.createTime ? row.createTime.split('T')[0] : '' }}
           </template>
         </el-table-column>
-        <el-table-column prop="status" label="状态" width="100">
+        <el-table-column prop="status" label="状态" width="250">
           <template #default="{ row }">
             <el-tag
               :type="row.status === 'pending' ? 'warning' : row.status === 'approved' ? 'success' : 'danger'"
@@ -24,7 +24,7 @@
             </el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="200">
+        <el-table-column label="操作" width="">
           <template #default="{ row }">
             <el-button size="small" @click="viewDetail(row)">查看</el-button>
             <el-button
@@ -147,10 +147,11 @@ const mapValues = (val: any,key: any) => {
     }else if(val == "1"){
       return "下午"
     }
+  }else if(key == "reviewTime" || key == "createTime"){
+    return String(val).substring(0,10);
   }else{
     return val;
   }
-  
 }
 
 const reject = (row: any) => {

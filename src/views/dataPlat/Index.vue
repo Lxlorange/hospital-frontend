@@ -74,7 +74,7 @@
         <el-table-column prop="week" label="星期"></el-table-column>
         <el-table-column prop="type" label="是否出诊">
           <template #default="scope">
-            <el-tag :type="scope.row.type === '0' ? 'danger' : 'success'" size="normal">
+            <el-tag :type="scope.row.type === '0' ? 'danger' : 'success'" size="normal" style="color: black;">
               {{ scope.row.type === '0' ? '否' : '出诊' }}
             </el-tag>
           </template>
@@ -84,14 +84,14 @@
         <el-table-column label="操作">
           <template #default="scope">
             <el-button 
-              type="danger" 
+              type="success" 
               size="small" 
               @click="addConsultationBySchedule(scope.row)"
             >
               加号
             </el-button>
             <el-button 
-              type="danger" 
+              type="warning"
               size="small" 
               @click="askForLeave(scope.row)"
             >
@@ -102,19 +102,8 @@
 
       </el-table>
     </el-card>
-  </el-main>
-  <AddConsultation 
-    v-model="addVisible"
-    :consultation="consultation"
-    @update="refreshDataPlat"
-  />
-  <AddConsultationBySchedule
-    v-model="addVisible2"
-    :consultation="consultation"
-    :scheduleId="currentScheduleId"
-    @update="refreshDataPlat"
-  />
-  <el-main class="statistic-main" v-if="userType==1">
+
+      <el-main class="statistic-main" v-if="userType==1">
     <div class="filters">
       <el-date-picker v-model="dateRange" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="YYYY-MM-DD" />
       <el-button type="primary" @click="refresh">刷新</el-button>
@@ -160,6 +149,18 @@
       </el-col>
     </el-row>
   </el-main>
+  </el-main>
+  <AddConsultation 
+    v-model="addVisible"
+    :consultation="consultation"
+    @update="refreshDataPlat"
+  />
+  <AddConsultationBySchedule
+    v-model="addVisible2"
+    :consultation="consultation"
+    :scheduleId="currentScheduleId"
+    @update="refreshDataPlat"
+  />
 </template>
 
 <script setup lang="ts">
@@ -492,6 +493,7 @@ watch(dateRange, () => {});
   padding: 24px; // 增加内边距
   font-family: 'Helvetica Neue', Helvetica, 'PingFang SC', 'Hiragino Sans GB',
              'Microsoft YaHei', '微软雅黑', Arial, sans-serif;
+  min-height: 100vh;
 }
 
 .panel-row {
@@ -640,6 +642,11 @@ watch(dateRange, () => {});
 }
 .chart-card {
   width: 100%;
+  &:hover {
+    transform: scale(1.05); /* 放大2% */
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.15); /* 增加阴影深度 */
+    z-index: 10; /* 确保悬停时图表在上方 */
+  }
 }
 .chart-title {
   font-size: 14px;
