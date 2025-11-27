@@ -30,9 +30,9 @@ defineProps(["menuList"]);
 
 <style scoped lang="scss">
 // 确保所有菜单项都有绿色背景
-.el-menu-item, .el-sub-menu {
+/*.el-menu-item, .el-sub-menu {
   background-color: #90ee90 !important;
-}
+}*/
 
 // 调整鼠标悬停时的颜色，以保持一致
 .el-menu-item:hover {
