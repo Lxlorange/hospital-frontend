@@ -4,6 +4,7 @@ export type MakeOrder = {
 	makeId: string,
 	userId: string,
 	visitUserId: string,
+	visitname:string,
 	doctorId: string,
 	times: string,
 	timesArea: string,
@@ -27,6 +28,14 @@ export type MakeOrderPageParm = {
 	doctorId:string
 }
 
+//历史记录
+export type HistoryPageParm = {
+    currentPage: number,
+    pageSize: number,
+    visitUserId: string | number, // 关键参数
+    status?: string
+}
+
 //删除
 export const deleteApi = (makeId:string) => {
     return http.delete(`api/makeOrder/${makeId}`)
@@ -39,4 +48,9 @@ export const getListApi = (parm:MakeOrderPageParm) => {
 //叫号
 export const callVisitApi = (parm:MakeOrder) => {
     return http.post("/api/makeOrder/callVisit",parm)
+}
+
+// 查询患者全院历史记录
+export const getAllHistoryApi = (parm: HistoryPageParm) => {
+    return http.get("/api/makeOrder/getAllHistory", parm)
 }
