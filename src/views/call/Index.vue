@@ -30,90 +30,63 @@
         stripe
         header-cell-class-name="custom-table-header"
       >
-        <el-table-column prop="visitname" label="就诊人" width="100" />
+        <el-table-column prop="visitname" label="就诊人" width="100" align="center">
+            <template #default="scope">
+                <span class="patient-name">{{ scope.row.visitname }}</span>
+            </template>
+        </el-table-column>
         <el-table-column prop="nickName" label="挂号医生" width="100" />
         <el-table-column prop="deptName" label="挂号科室" />
-        <el-table-column prop="times" label="挂号日期" />
-        <el-table-column prop="timesArea" label="挂号时段">
+        <el-table-column prop="times" label="挂号日期" width="110" />
+        <el-table-column prop="timesArea" label="时段" width="80" align="center">
           <template #default="scope">
-            <el-tag
-              v-if="scope.row.timesArea == '0'"
-              type="primary"
-              size="default"
-              effect="dark"
-            >
-              上午
-            </el-tag>
-            <el-tag
-              v-if="scope.row.timesArea == '1'"
-              type="warning"
-              size="default"
-              effect="dark"
-            >
-              下午
-            </el-tag>
+            <el-tag v-if="scope.row.timesArea == '0'" type="primary" effect="plain">上午</el-tag>
+            <el-tag v-if="scope.row.timesArea == '1'" type="warning" effect="plain">下午</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="week" label="星期" />
-        <el-table-column prop="createTime" label="创建时间" width="150" />
-        <el-table-column prop="price" label="挂号金额" />
-        <el-table-column prop="address" label="就诊地址" show-overflow-tooltip />
-        <el-table-column prop="status" label="挂号状态">
+        <el-table-column prop="week" label="星期" width="80" align="center" />
+        <el-table-column prop="createTime" label="创建时间" width="160" />
+        <el-table-column prop="price" label="费用" width="80">
+             <template #default="scope">￥{{ scope.row.price }}</template>
+        </el-table-column>
+        <el-table-column prop="status" label="状态" width="90" align="center">
           <template #default="scope">
-            <el-tag
-              v-if="scope.row.status == '1'"
-              type="success"
-              size="default"
-              effect="light"
-            >
-              已挂号
-            </el-tag>
-            <el-tag
-              v-if="scope.row.status == '2'"
-              type="info"
-              size="default"
-              effect="light"
-            >
-              已取消
-            </el-tag>
+            <el-tag v-if="scope.row.status == '1'" type="success">已挂号</el-tag>
+            <el-tag v-if="scope.row.status == '2'" type="info">已取消</el-tag>
           </template>
         </el-table-column>
-        <el-table-column prop="hasCall" label="是否叫号">
+        <el-table-column prop="hasCall" label="叫号情况" width="90" align="center">
           <template #default="scope">
-            <el-tag
-              v-if="scope.row.hasCall == '0'"
-              type="danger"
-              size="default"
-              effect="light"
-            >
-              未叫号
-            </el-tag>
-            <el-tag
-              v-if="scope.row.hasCall == '1'"
-              type="success"
-              size="default"
-              effect="light"
-            >
-              已叫号
-            </el-tag>
+            <el-tag v-if="scope.row.hasCall == '0'" type="danger" effect="light">未叫号</el-tag>
+            <el-tag v-if="scope.row.hasCall == '1'" type="success" effect="light">已叫号</el-tag>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width="220" align="center" fixed="right">
+        
+        <el-table-column label="操作" width="260" align="center" fixed="right">
           <template #default="scope">
             <el-button
-              class="call-button"
+              type="primary"
+              link
               icon="Bell"
-              size="default"
               @click="callBtn(scope.row)"
               :disabled="scope.row.hasCall == '1' || scope.row.status == '2'"
             >
               叫号
             </el-button>
+            
+            <el-button
+              type="info"
+              link
+              icon="Document"
+              @click="toHistory(scope.row)"
+            >
+              病历
+            </el-button>
+
             <el-button
               type="danger"
+              link
               icon="Delete"
-              size="default"
-              text
               @click="deleteBtn(scope.row.makeId)"
             >
               删除
@@ -141,6 +114,7 @@
 
 <script setup lang="ts">
 import { nextTick, onMounted, onUnmounted, reactive, ref } from "vue";
+import { useRouter } from "vue-router";
 import useInstance from "@/hooks/useInstance";
 import { getListApi, deleteApi, MakeOrder, callVisitApi } from "@/api/order/index";
 import { ElMessage } from "element-plus";
@@ -148,6 +122,7 @@ import { userSotre } from "@/store/user/index";
 
 const ustore = userSotre();
 const { global } = useInstance();
+const router = useRouter();
 
 // 搜索参数
 const searchParm = reactive({
@@ -204,6 +179,17 @@ const callBtn = async (row: MakeOrder) => {
   }
 };
 
+// 跳转到历史记录页面
+const toHistory = (row: MakeOrder) => {
+  router.push({
+    name: "PatientHistory", // 请确保路由中配置了这个name
+    query: {
+      visitUserId: row.visitUserId,
+      visitName: row.visitname // 将名字带过去，提升体验
+    }
+  });
+};
+
 // 查询按钮
 const searchBtn = () => {
   searchParm.currentPage = 1;
@@ -217,9 +203,9 @@ const resetBtn = () => {
   getList();
 };
 
-// 表格高度
+// 表格高度处理
 const tableHeight = ref(0);
-const TABLE_BOTTOM_OFFSET = 280; // 定义一个常量来表示偏移量
+const TABLE_BOTTOM_OFFSET = 240; 
 
 const setTableHeight = () => {
   tableHeight.value = window.innerHeight - TABLE_BOTTOM_OFFSET;
@@ -239,56 +225,45 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
-/* 整体页面容器 */
 .page-container {
   padding: 20px;
   background-color: #f0f2f5;
   min-height: 100vh;
 }
 
-/* 主卡片样式 */
 .main-card {
   border: none;
   border-radius: 8px;
-  transition: all 0.3s;
 }
 
-/* 卡片头部 */
 .card-header {
   display: flex;
   justify-content: space-between;
   align-items: center;
   font-size: 18px;
   font-weight: 600;
-}
-
-/* 搜索表单 */
-.search-form .el-form-item {
-  margin-bottom: 0; /* 消除表单项的下边距，使其在同一行内对齐 */
-}
-
-/* 自定义表格头部样式 */
-:deep(.custom-table-header th) {
-  background-color: #f5f7fa;
   color: #333;
-  font-weight: 600;
 }
 
-/* 分页器容器 */
+.search-form .el-form-item {
+  margin-bottom: 0; 
+}
+
+:deep(.custom-table-header th) {
+  background-color: #fafafa;
+  color: #606266;
+  font-weight: 600;
+  height: 50px;
+}
+
+.patient-name {
+    font-weight: 600;
+    color: #303133;
+}
+
 .pagination-container {
   display: flex;
   justify-content: flex-end;
   margin-top: 20px;
-}
-
-/* 叫号按钮自定义样式 */
-.call-button {
-  background: linear-gradient(45deg, #6a11cb 0%, #2575fc 100%);
-  color: white;
-  border: none;
-}
-
-.call-button:hover {
-  opacity: 0.9;
 }
 </style>

@@ -22,6 +22,14 @@ export const constantRoutes: Array<RouteRecordRaw> = [
         }
       }
     ]
+  },
+  {
+    path: '/patientHistory',
+    name: 'PatientHistory',
+    component: () => import('@/views/call/PatientHistory.vue'),
+    meta: {
+        title: '患者病历'
+    }
   }
 ]
 
