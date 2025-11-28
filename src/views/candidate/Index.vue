@@ -34,8 +34,7 @@
 
 <script setup lang="ts">
 import { ref, reactive, onMounted } from 'vue';
-import { ElMessage } from 'element-plus';
-import { getAllWaitlistApi, allocateWaitlistApi } from '@/api/waitlist';
+import { getAllWaitlistApi } from '@/api/waitlist';
 
 
 const loading = ref(false);
@@ -55,19 +54,7 @@ const getList = async () => {
 };
 
 const searchBtn = () => { getList(); };
-const resetBtn = () => { searchParm.name = ''; getList(); };
 
-const allocate = async (scheduleId: number) => {
-  try {
-    const res = await allocateWaitlistApi(String(scheduleId));
-    if (res && res.code === 200) {
-      ElMessage.success('分配成功');
-      await getList();
-    }
-  } catch (e:any) {
-    ElMessage.error(e?.msg || '分配失败');
-  }
-};
 
 onMounted(() => { getList(); });
 </script>

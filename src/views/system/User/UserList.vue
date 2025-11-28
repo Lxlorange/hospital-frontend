@@ -337,7 +337,7 @@ import UploadImage from "@/components/UploadImage.vue";
 import { ElMessage, FormInstance, UploadUserFile } from "element-plus";
 import SelectChecked from "@/components/SelectChecked.vue";
 import { getSelectApi } from "@/api/role/index";
-import { getSelectDeptApi } from "@/api/department/index";
+import { getSelectDeptApi, SelectType } from "@/api/department/index";
 import { NewType } from "@/type/BaseType";
 import {
   addApi,
@@ -370,7 +370,7 @@ const searchParm = reactive({
   pageSize: 10,
   total: 0,
 });
-const deptOptions = ref([]);
+const deptOptions = ref<SelectType[]>([]);
 //查询科室下拉数据
 const getSelectDept = async () => {
   let res = await getSelectDeptApi();
@@ -413,7 +413,7 @@ const priceOptions = ref([
 // ================================================================
 
 // 自定义手机号验证器
-const validatePhone = (rule: any, value: any, callback: any) => {
+const validatePhone = (value: any, callback: any) => {
   if (!value) {
     return callback(new Error("请输入电话号码"));
   }
@@ -662,12 +662,6 @@ const searchBtn = () => {
   getList();
 };
 //重置按钮点击事件
-const resetBtn = () => {
-  searchParm.nickName = "";
-  searchParm.phone = "";
-  searchParm.currentPage = 1;
-  getList();
-};
 //开关按钮
 // 判断是否在点击弹窗确认按钮时才调用接口
 const switchTags = ref("");

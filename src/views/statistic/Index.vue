@@ -86,6 +86,7 @@ const toLineOption = (title: string, data: DateCount[]) => {
   const x = data.map((i) => i.date);
   const y = data.map((i) => i.count);
   return {
+    title: { text: title },
     tooltip: { trigger: "axis" },
     grid: { left: 40, right: 20, bottom: 40, top: 40 },
     xAxis: { type: "category", data: x },

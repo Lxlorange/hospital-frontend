@@ -53,7 +53,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { LeaveType } from "@/api/leave/LeaveModel";
 import { requestLeave } from "@/api/leave";

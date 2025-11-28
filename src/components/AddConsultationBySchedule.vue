@@ -44,10 +44,8 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
-import { requestLeave } from "@/api/leave";
 import { ConsultationType } from "@/api/home/ConsultationModel";
-import { addConsultationApi, getPatientsApi, getScheduleIdApi } from "@/api/home";
-import { userSotre } from "@/store/user";
+import { addConsultationApi, getPatientsApi} from "@/api/home";
 
 const props = defineProps<{
   modelValue: boolean;
@@ -66,7 +64,6 @@ watch(
 
 watch(localVisible, (val) => emits("update:modelValue", val));
 
-const store = userSotre();
 const form = ref<ConsultationType>({...props.consultation});
 const currentScheduleId = props.scheduleId;
 watch(

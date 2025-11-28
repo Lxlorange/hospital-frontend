@@ -237,11 +237,6 @@ const searchBtn = () => {
   getList();
 };
 //重置
-const resetBtn = () => {
-  searchParm.noticeTitle = "";
-  searchParm.currentPage = 1;
-  getList();
-};
 //页容量改变时触发
 const sizeChange = (size: number) => {
   searchParm.pageSize = size;

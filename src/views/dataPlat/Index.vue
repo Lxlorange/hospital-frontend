@@ -179,7 +179,6 @@ import {
   Tickets
 } from "@element-plus/icons-vue";
 import {
-  addConsultationApi,
   getHomeTotalApi,
   getMyScheduleApi,
 } from "../../api/home/index";
@@ -245,7 +244,6 @@ const refreshDataPlat = () => {
 //添加号源
 const showAddConsultationBtn = ref<boolean>(false);
 const addConsultation = async () => {
-  const doctorId = strore.getUserId;
   addVisible.value = true;
 };
 
@@ -265,11 +263,6 @@ const askForLeave = async (row: any) => {
   const doctorId = String(row.doctorId);
   const scheduleId = Number(row.scheduleId);
   reason = String(reason);
-  const parm = {
-    doctorId,
-    scheduleId,
-    reason
-  }
   const res = await requestLeave({
     doctorId,
     scheduleId, 
@@ -311,7 +304,7 @@ const initDefaultRange = () => {
   dateRange.value = [fmt(start), fmt(end)];
 };
 
-const toLineOption = (title: string, data: DateCount[]) => {
+const toLineOption = (_title: string, data: DateCount[]) => {
   const x = data.map((i) => i.date);
   const y = data.map((i) => i.count);
 

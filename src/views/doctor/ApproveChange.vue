@@ -65,9 +65,6 @@
 import { ref, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { getUpdateRequestsApi, approveRequestApi } from "@/api/doctor";
-import { userSotre } from "@/store/user/index";
-
-const store = userSotre();
 const requests = ref<any[]>([]);
 const detailVisible = ref(false);
 const compareFields = ref<any>({});

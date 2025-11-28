@@ -52,7 +52,7 @@
           :key="key"
           :label="fieldLabels[key] || key"
         >
-          <template v-if="isImageField(key, val)">
+          <template v-if="isImageField( val)">
             <el-image
               :src="val"
               :preview-src-list="[val]"
@@ -106,7 +106,7 @@ const statusText = (status: string) => {
 const baseURL = "";
 
 // 判断是否为图片字段
-const isImageField = (key: number, val: string) => {
+const isImageField = ( val: string) => {
   if (!val) return false;
   const lowerVal = String(val).toLowerCase();
 

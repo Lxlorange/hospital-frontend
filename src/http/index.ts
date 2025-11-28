@@ -3,7 +3,7 @@ import { ElMessage } from 'element-plus'
 import { userSotre } from "@/store/user";
 //axios的配置项
 const config: AxiosRequestConfig= {
-    baseURL: 'http://localhost:8089', //求接口的地址
+    baseURL: (process.env as any).BASE_API || '',
     timeout: 10000,
     withCredentials:true
 }

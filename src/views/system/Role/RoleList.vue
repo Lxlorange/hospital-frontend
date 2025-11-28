@@ -249,11 +249,6 @@ const searchBtn = () => {
   getList();
 };
 //重置
-const resetBtn = () => {
-  searchParm.roleName = "";
-  searchParm.currentPage = 1;
-  getList();
-};
 onMounted(() => {
   nextTick(() => {
     tableHeight.value = window.innerHeight - 250; // 调整高度以适应新布局
