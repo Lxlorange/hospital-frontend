@@ -14,6 +14,10 @@ export default defineConfig(({ mode }) => {
         '/api': {
           target: 'http://localhost:8089',
           changeOrigin: true
+        },
+        '/wxapi': {
+          target: 'http://localhost:8089',
+          changeOrigin: true
         }
       }
     },
