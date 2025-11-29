@@ -2,7 +2,7 @@
 
 import http from "@/http";
 // 从 department API 文件导入通用类型
-import { ApiResponse, SelectType } from "../department";
+import { ApiResponse } from "../department";
 
 // ================== 1. 数据模型 (TypeScript Types) ==================
 

@@ -124,11 +124,6 @@ const searchBtn = () => {
   getList();
 };
 //重置 (您原来有这个函数，但模板里没有按钮，我加上了)
-const resetBtn = () => {
-  searchParm.name = "";
-  searchParm.currentPage = 1;
-  getList();
-};
 
 // 新增 (占位，您需要实现)
 const addBtn = () => {

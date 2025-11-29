@@ -152,17 +152,47 @@
 import { reactive, ref } from "vue";
 import SysDialog from "@/components/SysDialog.vue";
 import useDialog from "@/hooks/useDialog";
-import { getSelectDeptApi } from "@/api/department/index";
+import { getSelectDeptApi, SelectType } from "@/api/department/index";
 import { getSelectUserApi } from "@/api/user/index";
-import {
-  SelectType,
-  scheduleAddApi,
-  ScheduleDetail,
-  Schedule,
-} from "@/api/schedule/index";
+import { addInstanceApi } from "@/api/schedule/index";
 import dayjs from "dayjs";
 import { ElMessage } from "element-plus";
-import { Calendar, Tickets, User } from '@element-plus/icons-vue'
+
+type ScheduleDetail = {
+  detailId: string;
+  scheduleId: string;
+  doctorId: string;
+  times: string;
+  week: string;
+  witchWeek: number;
+  type: number;
+  amount: number;
+  lastAmount: number;
+  doctorName: string;
+}
+
+type Schedule = {
+  scheduleId: string;
+  doctorId: string;
+  doctorName: string;
+  departmentName: string;
+  weekOneM: number;
+  weekTwoM: number;
+  weekThreeM: number;
+  weekFourM: number;
+  weekFiveM: number;
+  weekSixM: number;
+  weekZeroM: number;
+  weekOne: string;
+  weekTwo: string;
+  weekThree: string;
+  weekFour: string;
+  weekFive: string;
+  weekSix: string;
+  weekZero: string;
+  week: number;
+  details: ScheduleDetail[];
+}
 
 const { dialog, onClose, onShow } = useDialog();
 
@@ -180,7 +210,7 @@ const weekMapping = [
 //表头日期
 const weekArr = ref<Array<string>>([]);
 //表格数据
-const tableData = ref<any>([]);
+const tableData = ref<Schedule[]>([]);
 //全选
 const isCheckAll = ref(false);
 //全选按钮
@@ -225,8 +255,9 @@ const setTime = (index: number, times: string) => {
   const weekPropMapping = [
     'weekOne', 'weekTwo', 'weekThree', 'weekFour', 'weekFive', 'weekSix', 'weekZero'
   ];
+  type WeekProp = 'weekOne' | 'weekTwo' | 'weekThree' | 'weekFour' | 'weekFive' | 'weekSix' | 'weekZero';
   if(index < weekPropMapping.length) {
-    const prop = weekPropMapping[index];
+    const prop = weekPropMapping[index] as WeekProp;
     tableData.value.forEach((dom: Schedule) => {
       dom[prop] = times;
     });
@@ -287,7 +318,7 @@ const changeTime = (val: any) => {
   //显示表头日期
   generateDates(baseForm.startTime, baseForm.endTime);
 };
-const deptOptions = ref([]);
+const deptOptions = ref<SelectType[]>([]);
 //查询科室下拉数据
 const getSelectDept = async () => {
   let res = await getSelectDeptApi();
@@ -317,7 +348,7 @@ const getSelectUser = async (deptId: string) => {
 
     //生成表格数据
     if (res.data && res.data.length > 0) {
-      tableData.value = res.data.map(user => ({
+      tableData.value = res.data.map((user: SelectType) => ({
         scheduleId: "",
         doctorId: user.value,
         doctorName: user.label,
@@ -343,7 +374,7 @@ const getSelectUser = async (deptId: string) => {
   }
 };
 //下拉选择医生的事件
-const docChange = (e: number) => {
+const docChange = (e: string) => {
   tableData.value = [];
   // 如果清空了医生，则恢复显示该科室所有医生
   if (!e) {
@@ -477,11 +508,31 @@ const commit = async () => {
     return;
   }
 
-  let res = await scheduleAddApi(scheduleList.value);
-  if (res && res.code == 200) {
+  try {
+    await Promise.all(
+      scheduleList.value.map((detail: ScheduleDetail) =>
+        addInstanceApi({
+          doctorId: detail.doctorId,
+          doctorName: detail.doctorName,
+          departmentName: "",
+          scheduleDate: detail.times,
+          timeSlot: 1,
+          status: 1,
+          slots: [
+            {
+              slotType: "普通号",
+              totalAmount: detail.amount,
+              availableAmount: detail.lastAmount,
+            },
+          ],
+        } as any)
+      )
+    );
     ElMessage.success("排班创建成功！");
     emits("onRefsh");
     onClose();
+  } catch (e) {
+    ElMessage.error("排班创建失败");
   }
 };
 </script>

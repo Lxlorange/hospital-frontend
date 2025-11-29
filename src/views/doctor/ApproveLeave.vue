@@ -64,10 +64,8 @@
 <script lang="ts" setup>
 import { ref, onMounted } from "vue";
 import { ElMessage, ElMessageBox } from "element-plus";
-import { userSotre } from "@/store/user/index";
-import { updateLeaveStatus, listLeaveRequest, requestLeave } from "@/api/leave";
+import { updateLeaveStatus, listLeaveRequest } from "@/api/leave";
 
-const store = userSotre();
 const requests = ref<any[]>([]);
 const detailVisible = ref(false);
 const compareFields = ref<any>({});

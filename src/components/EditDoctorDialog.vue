@@ -45,7 +45,7 @@
 </template>
 
 <script lang="ts" setup>
-import { onMounted, ref, watch } from "vue";
+import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { updateDoctorInfoApi } from "@/api/doctor";
 import { DoctorType } from '../api/doctor/DoctorModel';

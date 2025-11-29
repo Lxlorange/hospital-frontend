@@ -231,11 +231,6 @@ const searchBtn = () => {
 };
 
 // 修复：重置按钮逻辑
-const resetBtn = () => {
-  searchParm.name = ""; // 清空搜索词
-  searchParm.currentPage = 1; // 重置到第一页
-  getList();
-};
 
 // 就诊按钮
 const makeBtn = (row: MakeOrderVisit) => {

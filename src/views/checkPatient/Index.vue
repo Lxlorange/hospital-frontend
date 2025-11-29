@@ -101,7 +101,6 @@ import useInstance from "@/hooks/useInstance";
 import {
   getListApi,
   deleteApi,
-  enabledApi,
   resetPasswordApi,
   WxUser,
 } from "@/api/wx_user/index";
@@ -149,11 +148,6 @@ const searchBtn = () => {
   getList();
 };
 //重置
-const resetBtn = () => {
-  searchParm.name = "";
-  searchParm.currentPage = 1;
-  getList();
-};
 //页容量改变时触发
 const sizeChange = (size: number) => {
   searchParm.pageSize = size;
@@ -179,33 +173,6 @@ const resetPasswordBtn = async (row: WxUser) => {
 };
 
 // ================== 状态开关逻辑优化 ==================
-const onBeforeStatusChange = async (row: WxUser) => {
-  try {
-    const confirm = await global.$myconfirm(
-      row.status ? "确定停用该用户吗?" : "确定启用该用户吗?"
-    );
-
-    if (!confirm) {
-      return false; // 阻止切换
-    }
-
-    const res = await enabledApi({
-      userId: row.userId,
-      status: !row.status, // 传递的是 *新的* 状态
-    });
-
-    if (res && res.code == 200) {
-      ElMessage.success(res.msg);
-      return true; // 允许切换
-    } else {
-      ElMessage.error(res.msg || "操作失败");
-      return false; // API 失败，阻止切换
-    }
-  } catch (error) {
-    console.log("操作取消或发生错误", error);
-    return false; // 阻止切换
-  }
-};
 
 //表格高度
 const tableHeight = ref(0);

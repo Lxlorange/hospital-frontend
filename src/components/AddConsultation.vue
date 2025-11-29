@@ -60,7 +60,6 @@
 <script lang="ts" setup>
 import { ref, watch } from "vue";
 import { ElMessage } from "element-plus";
-import { requestLeave } from "@/api/leave";
 import { ConsultationType } from "@/api/home/ConsultationModel";
 import { addConsultationApi, getPatientsApi, getScheduleIdApi } from "@/api/home";
 import { userSotre } from "@/store/user";

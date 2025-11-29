@@ -165,11 +165,6 @@ const searchBtn = () => {
   getList();
 };
 //重置
-const resetBtn = () => {
-  searchParm.deptName = "";
-  searchParm.currentPage = 1;
-  getList();
-};
 //创建、修改的标识
 const tags = ref("");
 //创建

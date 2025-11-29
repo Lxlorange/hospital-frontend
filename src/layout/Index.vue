@@ -13,7 +13,6 @@
       <el-main class="main">
         <div class="tabs">
           <Tabs class="tabs-content"></Tabs>
-          <ColseTabs></ColseTabs>
         </div>
         <router-view></router-view>
       </el-main>
@@ -25,7 +24,6 @@
 import Header from "./header/Header.vue";
 import MenuBar from "./menu/MenuBar.vue";
 import Tabs from "./tabs/Tabs.vue";
-import ColseTabs from "./tabs/ColseTabs.vue";
 import { nextTick, ref } from "vue";
 //菜单背景色
 let menubg = ref("");
