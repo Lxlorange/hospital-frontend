@@ -54,8 +54,8 @@ class Http {
                     localStorage.clear();
                     window.location.href = '/login';
                     return Promise.reject(res.data);
-                } else if (code !== 200) { // 业务成功
-                    ElMessage.error(msg || '服务器出错!');
+                }else if (code !== 200) { // 业务成功
+                    //ElMessage.error(msg || '服务器出错!');
                     return Promise.reject(res.data);
                 } else return res.data as any; //类型断言
                 // return res;
