@@ -1,22 +1,26 @@
 import http from "@/http";
 //数据类型
 export type MakeOrder = {
-	makeId: string,
-	userId: string,
-	visitUserId: string,
-	visitname:string,
-	doctorId: string,
-	times: string,
-	timesArea: string,
-	week: string,
-	createTime: string,
-	price: string,
-	address: string,
-	status: string,
-	hasCall: string,
-	hasVisit: string,
-	hasLive: string,
-	advice: string,
+    makeId: string,
+    userId: string,
+    visitUserId: string,
+    visitname:string,
+    doctorId: string,
+    times: string,
+    timesArea: string,
+    week: string,
+    createTime: string,
+    price: string,
+    address: string,
+    status: string,
+    hasCall: string,
+    hasVisit: string,
+    hasLive: string,
+    advice: string,
+    calledTime?: string,
+    signInStatus?: string,
+    signInTime?: string,
+    missed?: string,
 }
 //列表查询参数
 export type MakeOrderPageParm = {
@@ -48,6 +52,10 @@ export const getListApi = (parm:MakeOrderPageParm) => {
 //叫号
 export const callVisitApi = (parm:MakeOrder) => {
     return http.post("/api/makeOrder/callVisit",parm)
+}
+
+export const checkInApi = (parm: { makeId: string }) => {
+    return http.post("/api/makeOrder/checkIn", parm)
 }
 
 // 查询患者全院历史记录
