@@ -83,21 +83,6 @@
             >
           </template>
         </el-table-column>
-        <el-table-column prop="sex" label="在职">
-          <template #default="scope">
-            <el-switch
-              v-model="scope.row.enabled"
-              :active-value="true"
-              :inactive-value="false"
-              :before-change="beforeStatus.bind(global, scope.row)"
-              @change="changStatus(scope.row.userId)"
-              style="
-                --el-switch-on-color: #13ce66;
-                --el-switch-off-color: #ff4949;
-              "
-            />
-          </template>
-        </el-table-column>
         <el-table-column
           v-if="
             global.$hasPerm([
