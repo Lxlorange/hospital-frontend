@@ -9,6 +9,9 @@
           </div>
           <div class="search-area">
             <el-form :model="searchParm" :inline="true" size="default" class="search-form">
+              <el-form-item v-if="userIdentity === '0'">
+                <el-button type="primary" icon="Bell" @click="callNext">顺序叫号</el-button>
+              </el-form-item>
               <el-form-item label="关键词检索">
                 <el-input
                   v-model="searchParm.name"
@@ -180,6 +183,8 @@ import { getListApi, deleteApi, MakeOrder, callVisitApi, checkInApi } from "@/ap
 import { Timer } from "@element-plus/icons-vue";
 import { ElMessage } from "element-plus";
 import { userSotre } from "@/store/user/index";
+import { callNextApi } from '../../api/order/index';
+import { getScheduleIdApi } from "@/api/home";
 
 const ustore = userSotre();
 const { global } = useInstance();
@@ -201,6 +206,39 @@ const loading = ref(false);
 const nowTs = ref(Date.now());
 let timer: number | undefined;
 const allList = ref<MakeOrder[]>([]);
+
+const userIdentity: string = ustore.getType;
+
+const callNext = async () => {
+  const doctorId = ustore.getUserId;
+
+  if(ustore.getType != '0') {
+    ElMessage.error("非医生请勿叫号");
+    return;
+  }
+
+  const now = new Date();
+  const date = now.toISOString().slice(0, 10);  // YYYY-MM-DD
+  //const date = '2025-12-08'
+  const timeSlot = now.getHours() < 12 ? "0" : "1";
+
+  try {
+    const res = await getScheduleIdApi(date, timeSlot, doctorId);
+    
+    const scheduleId: number = res?.data;
+    if (!scheduleId) {
+      ElMessage.error("您当前不在上班时间");
+      return;
+    }
+    try {
+      await callNextApi(scheduleId);
+      ElMessage.success("叫号成功");
+    }catch(err: any) {
+      ElMessage.error(err.msg);
+    }
+    
+  } catch (err) {}
+};
 
 // 获取表格数据
 const getList = async () => {

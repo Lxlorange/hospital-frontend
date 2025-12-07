@@ -62,3 +62,8 @@ export const checkInApi = (parm: { makeId: string }) => {
 export const getAllHistoryApi = (parm: HistoryPageParm) => {
     return http.get("/api/makeOrder/getAllHistory", parm)
 }
+
+// 顺序叫号
+export const callNextApi = (scheduleId: number) => {
+    return http.post(`/api/makeOrder/callNext/${scheduleId}`);
+}
