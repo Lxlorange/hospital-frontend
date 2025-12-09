@@ -218,6 +218,7 @@ const getHomeTotal = async () => {
 
 const addConsultationBySchedule = async (row: any) => {
   currentScheduleId.value = row.scheduleId;
+  console.log(currentScheduleId.value)
   addVisible2.value = true;
 }
 
@@ -231,6 +232,7 @@ const getMySchedule = async (type: string) => {
   if (res && res.code === 200) {
     schedule.value = res.data;
   }
+  console.log(schedule.value)
 };
 
 const addVisible = ref<boolean>(false);

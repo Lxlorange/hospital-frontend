@@ -42,7 +42,7 @@
 </template>
 
 <script lang="ts" setup>
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { ElMessage } from "element-plus";
 import { ConsultationType } from "@/api/home/ConsultationModel";
 import { addConsultationApi, getPatientsApi} from "@/api/home";
@@ -64,8 +64,19 @@ watch(
 
 watch(localVisible, (val) => emits("update:modelValue", val));
 
+
+let currentScheduleId = ref(0);
+
+watch(
+  () => props.scheduleId,
+  (newVal) => {
+    console.log(newVal);
+    currentScheduleId.value = newVal ;
+  },
+  { immediate: true}
+)
 const form = ref<ConsultationType>({...props.consultation});
-const currentScheduleId = props.scheduleId;
+
 watch(
   () => props.consultation,
   (newVal) => {
@@ -81,7 +92,8 @@ const close = () => {
 const submit = async () => {
   try {
     const consultation: ConsultationType = {...form.value};
-    await addConsultationApi(String(currentScheduleId), consultation.user.visitUserId, consultation.user.userId, consultation.reason);
+    console.log(currentScheduleId.value)
+    await addConsultationApi(String(currentScheduleId.value), consultation.user.visitUserId, consultation.user.userId, consultation.reason);
     emits("updated");
     close();
   } catch (err) {
