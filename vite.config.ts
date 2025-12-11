@@ -18,6 +18,10 @@ export default defineConfig(({ mode }) => {
         '/wxapi': {
           target: 'http://localhost:8089',
           changeOrigin: true
+        },
+        '/images': {
+          target: 'http://localhost:8089',
+          changeOrigin: true
         }
       }
     },
@@ -31,7 +35,7 @@ export default defineConfig(({ mode }) => {
     },
     define: {
       'process.env': {
-        BASE_API_IMG: isDev ? '/api' : '',
+        BASE_API_IMG: '',
         BASE_API: isDev ? '' : ''
       }
     },
