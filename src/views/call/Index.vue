@@ -233,6 +233,7 @@ const callNext = async () => {
     try {
       await callNextApi(scheduleId);
       ElMessage.success("叫号成功");
+      getList();
     }catch(err: any) {
       ElMessage.error(err.msg);
     }
