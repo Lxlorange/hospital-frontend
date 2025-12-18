@@ -46,7 +46,8 @@ export const menuStore = defineStore('menuStore', {
                     if(res && res.code == 200){
                         //生成路由
                         accessRoute = generateRoute(res.data,router) as any
-                        this.menuList = this.menuList.concat(accessRoute)
+                        // this.menuList = this.menuList.concat(accessRoute)
+                        this.menuList = accessRoute; //用最新的数据把旧的顶替掉更好吧
                     }
                     resolve(this.menuList)
                 }).catch((error)=>{

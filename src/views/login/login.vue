@@ -36,8 +36,13 @@
         </div>
       </el-form-item>
       <el-form-item>
-        <el-button @click="commit" class="login-button" type="primary">
-          登录
+        <el-button 
+          @click="commit" 
+          class="login-button" 
+          type="primary" 
+          :loading="loading"
+        >
+          {{ loading ? '登录中...' : '登录' }}
         </el-button>
       </el-form-item>
     </el-form>
@@ -45,16 +50,17 @@
 </template>
 
 <script setup lang="ts">
-import { FormInstance } from "element-plus";
+import { ElMessage, FormInstance } from "element-plus";
 import { onMounted, reactive, ref } from "vue";
 import { getImgApi, loginApi } from "@/api/user/index";
 import { userSotre } from "@/store/user/index";
 import { useRouter } from "vue-router";
 const router = useRouter();
 const store = userSotre();
-//表单ref属性
 const form = ref<FormInstance>();
-//表单绑定对象
+
+const loading = ref(false);
+
 const loginModel = reactive({
   username: "admin",
   password: "123456",
@@ -62,27 +68,9 @@ const loginModel = reactive({
 });
 //表单验证规则
 const rules = reactive({
-  username: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "输入用户名",
-    },
-  ],
-  password: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "输入密码",
-    },
-  ],
-  code: [
-    {
-      required: true,
-      trigger: ["blur", "change"],
-      message: "输入验证码",
-    },
-  ],
+  username: [{ required: true, trigger: ["blur", "change"], message: "输入用户名" }],
+  password: [{ required: true, trigger: ["blur", "change"], message: "输入密码" }],
+  code: [{ required: true, trigger: ["blur", "change"], message: "输入验证码" }],
 });
 const imgsrc = ref("");
 //获取验证码
@@ -96,16 +84,30 @@ const getImg = async () => {
 const commit = () => {
   form.value?.validate(async (valid) => {
     if (valid) {
-      let res = await loginApi(loginModel);
-      if (res && res.code == 200) {
-        //存储用户信息
-        store.setUserId(res.data.userId);
-        store.setNickName(res.data.nickName);
-        store.setToken(res.data.token);
-        store.setType(res.data.type);
-        //跳转数据中台
-        router.push({ path: "/" });
-      }
+      loading.value = true;
+      try {
+        let res = await loginApi(loginModel);
+        
+        if (res && res.code == 200) {
+          store.setUserId(res.data.userId);
+          store.setNickName(res.data.nickName);
+          store.setToken(res.data.token);
+          store.setType(res.data.type);
+          
+          router.push({ path: "/" });
+          ElMessage.success("登录成功");
+        } 
+        else {
+           loading.value = false;
+           getImg();
+        }
+      } catch (error) {
+        const errorMsg = Object(error).msg || "系统繁忙，请稍后再试";
+        ElMessage.error(errorMsg);
+        
+        loading.value = false;
+        getImg();
+      } 
     }
   });
 };
