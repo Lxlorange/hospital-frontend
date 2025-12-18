@@ -397,8 +397,8 @@ const priceOptions = ref([
 ]);
 // ================================================================
 
-// 自定义手机号验证器
-const validatePhone = (value: any, callback: any) => {
+const validatePhone = (rule: any, value: any, callback: any) => {
+  void rule;
   if (!value) {
     return callback(new Error("请输入电话号码"));
   }
