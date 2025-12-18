@@ -61,7 +61,7 @@
         <div class="card-header">
           <span>排班</span>
           <div class="schedule-buttons">
-            <el-button type="primary" size="small" @click="addConsultation()" style="margin-right: 15px;background-color: powderblue;color: black;" v-show="showAddConsultationBtn">临时加号</el-button>
+            <!--<el-button type="primary" size="small" @click="addConsultation()" style="margin-right: 15px;background-color: powderblue;color: black;" v-show="showAddConsultationBtn">临时加号</el-button>-->
             <el-button type="primary" size="small" @click="getMySchedule('1')">本星期</el-button>
             <el-button type="warning" size="small" @click="getMySchedule('2')">下星期</el-button>
             <el-button type="success" size="small" @click="getMySchedule('3')">上星期</el-button>
@@ -218,7 +218,6 @@ const getHomeTotal = async () => {
 
 const addConsultationBySchedule = async (row: any) => {
   currentScheduleId.value = row.scheduleId;
-  console.log(currentScheduleId.value)
   addVisible2.value = true;
 }
 
@@ -270,7 +269,7 @@ const askForLeave = async (row: any) => {
     scheduleId, 
     reason
   });
-  if(res.data.code == 200) {
+  if(res.code == 200) {
     ElMessage.success("申请成功")
   }
 }

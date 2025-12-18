@@ -7,7 +7,7 @@
   >
     <el-form :model="form" label-width="100px" style="margin-top: 10px;">
       <el-form-item label="姓名">
-        <el-input v-model="form.nickName" />
+        <el-input v-model="form.nickName" disabled/>
       </el-form-item>
       <el-form-item label="性别">
         <el-select v-model="form.sex" disabled placeholder="选择性别">

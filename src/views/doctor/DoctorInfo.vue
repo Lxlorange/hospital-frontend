@@ -16,7 +16,7 @@
         </div>
         <div class="doctor-edit">
           <el-button type="warning" size="middle" @click="editDoctorInfo">编辑资料</el-button>
-          <el-button type="success" size="middle" @click="requestLeave">申请请假</el-button>
+          <!-- <el-button type="success" size="middle" @click="requestLeave">申请请假</el-button> -->
         </div>
       </div>
     </el-card>
