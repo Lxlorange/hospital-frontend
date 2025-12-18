@@ -31,6 +31,7 @@ export type InstanceSlot = {
 }
 
 export type ScheduleInstance = {
+  id: number;
   instanceId: string;
   doctorId: string;
   doctorName: string;
@@ -69,7 +70,7 @@ export const getInstancesApi = (params: InstanceQueryParm) => {
     return http.get<ApiResponse<ScheduleInstance[]>>("/api/schedule/instance", params);
 }
 
-export const updateInstanceStatusApi = (instanceId: string, status: number) => {
+export const updateInstanceStatusApi = (instanceId: number, status: number) => {
     return http.put<ApiResponse<null>>(`/api/schedule/instance/${instanceId}/status`, { status });
 }
 

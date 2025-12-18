@@ -447,7 +447,7 @@ const transformApiData = (apiData: any[]): ScheduleInstance[] => {
         const key = `${item.doctorId}-${item.times}-${item.timeSlot}`;
 
         const newSlot: InstanceSlot = {
-            instanceSlotId: item.scheduleId,
+            instanceSlotId: item.scheduleId, // 这里的命名可能有点歧义，但先不动它
             slotType: item.levelName,
             totalAmount: item.amount,
             availableAmount: item.lastAmount
@@ -455,6 +455,7 @@ const transformApiData = (apiData: any[]): ScheduleInstance[] => {
 
         if (!instanceMap.has(key)) {
             instanceMap.set(key, {
+                id: Number(item.scheduleId), 
                 instanceId: key,
                 doctorId: item.doctorId,
                 doctorName: item.doctorName,
@@ -507,12 +508,19 @@ const handleGenerateSchedule = () => {
     });
 }
 
-const updateStatus = async (instanceId: string, status: number) => {
-    const res = await updateInstanceStatusApi(instanceId, status);
+// 修改入参名称以避免混淆，这里接收的是字符串 Key
+const updateStatus = async (key: string, status: number) => {
+    const instance = instanceState.selectedDayInstances.find(i => i.instanceId === key);
+    if (!instance) {
+        ElMessage.error('未找到排班信息');
+        return;
+    }
+    const res = await updateInstanceStatusApi(instance.id, status);
     if(res && res.code === 200) {
         ElMessage.success('状态更新成功');
-        const instance = instanceState.selectedDayInstances.find(i => i.instanceId === instanceId);
-        if(instance) instance.status = status;
+        instance.status = status;
+    } else {
+        ElMessage.error(res.msg);
     }
 }
 
