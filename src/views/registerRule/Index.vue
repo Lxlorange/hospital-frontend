@@ -5,14 +5,17 @@
       <h2>挂号规则设置</h2>
 
       <!-- 可预约天数 -->
-      <el-form :model="form" label-width="160px">
+      <el-form :model="form" label-width="160px"
+        label-position="left">
 
-        <el-form-item label="可预约天数（1~60）">
+        <el-form-item label="可预约天数（1~60）"
+          label-position="left">
           <el-input-number
             v-model="form.days"
             :min="1"
             :max="60"
             controls-position="right"
+            style="width: 200px;"
           />
           <el-button type="primary" @click="updateDays" style="margin-left: 10px">
             更新天数
@@ -22,12 +25,14 @@
         <el-divider />
 
         <!-- 放号时间 -->
-        <el-form-item label="每日放号时间">
+        <el-form-item label="每日放号时间"
+          label-position="left">
           <el-time-picker
             v-model="form.time"
             placeholder="选择放号时间"
             format="HH:mm"
             value-format="HH:mm"
+            style="width: 200px;"
           />
           <el-button type="primary" @click="updateTime" style="margin-left: 10px">
             更新时间
@@ -108,4 +113,5 @@ onMounted(() => {
 .box-card {
   padding: 20px;
 }
+
 </style>

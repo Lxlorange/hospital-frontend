@@ -116,7 +116,7 @@
                 </el-button>
               </el-tooltip>
 
-              <el-divider direction="vertical" />
+              <!--<el-divider direction="vertical" />
 
               <el-tooltip content="确认患者已到达" placement="top" :show-after="500">
                 <el-button
@@ -128,7 +128,7 @@
                 >
                   签到
                 </el-button>
-              </el-tooltip>
+              </el-tooltip>-->
 
               <el-divider direction="vertical" />
               
@@ -233,6 +233,7 @@ const callNext = async () => {
     try {
       await callNextApi(scheduleId);
       ElMessage.success("叫号成功");
+      getList();
     }catch(err: any) {
       ElMessage.error(err.msg);
     }
