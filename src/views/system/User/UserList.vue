@@ -147,8 +147,8 @@
       :width="dialog.width"
       :height="dialog.height"
       :visible="dialog.visible"
-      @on-close="onClose"
-      @on-confirm="commit"
+      @onClose="onClose"
+      @onConfirm="commit"
     >
       <template v-slot:content>
         <el-form
@@ -603,20 +603,27 @@ const selected = (value: Array<string | number>) => {
 const commit = () => {
   //验证表单
   addForm.value?.validate(async (valid) => {
-    console.log(addModel);
     if (valid) {
-      let res = null;
-      if (tags.value == "0") {
-        res = await addApi(addModel);
-      } else {
-        res = await editApi(addModel);
+      try {
+        let res = null;
+        if (tags.value == "0") {
+          res = await addApi(addModel);
+        } else {
+          res = await editApi(addModel);
+        }
+        if (res && res.code == 200) {
+          ElMessage.success(res.msg);
+          upImgRef.value.clearimg();
+          getList();
+          onClose();
+        } else {
+          ElMessage.error((res as any)?.msg || "保存失败");
+        }
+      } catch {
+        ElMessage.error("保存失败");
       }
-      if (res && res.code == 200) {
-        ElMessage.success(res.msg);
-        upImgRef.value.clearimg();
-        getList();
-        onClose();
-      }
+    } else {
+      ElMessage.error("请完善表单信息");
     }
   });
 };
